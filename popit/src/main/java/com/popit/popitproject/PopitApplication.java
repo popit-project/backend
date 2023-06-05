@@ -8,6 +8,7 @@ public class PopitApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PopitApplication.class, args);
+		System.out.println("heser");
 	}
 
 }
