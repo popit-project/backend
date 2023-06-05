@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexController {
 
     @GetMapping    // 기본 홈 경로
-    public ResponseBody<?> index() {
-        return ResponseEntity.ok();
+    public String index() {
+        return "index";
     }
 
 }
