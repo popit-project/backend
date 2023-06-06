@@ -1,0 +1,11 @@
+### 회원가입
+
+POST http://localhost:8081/user/register
+//POST http://3.34.149.107:3306/user/register
+Content-Type: application/json
+
+{
+  "userId": "testuser4",
+  "password": "testpasswor444",
+  "nickname": "testnickname15555"
+}
