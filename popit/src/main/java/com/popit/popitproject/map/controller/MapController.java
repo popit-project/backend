@@ -1,10 +1,15 @@
 package com.popit.popitproject.map.controller;
 
 
+import com.popit.popitproject.map.entity.MapEntity;
 import com.popit.popitproject.map.model.MapDTO;
 import com.popit.popitproject.map.service.MapService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,13 +20,18 @@ public class MapController {
 
     @PostMapping("/insert")
     public String insertMap(@RequestBody MapDTO mapDto) {
-        mapService.creatMap(mapDto.getId(),mapDto.getStore_address(),mapDto.getStore_name(),mapDto.getStore_phone(),
-                mapDto.getStore_time(),mapDto.getLongitude(),mapDto.getLatitude());
-        return "성공";
+        mapService.creatMap(mapDto.getId(),mapDto.getStoreAddress(),mapDto.getStoreName(),mapDto.getStorePhone(),
+                mapDto.getStoreTime(),mapDto.getLongitude(),mapDto.getLatitude());
+        return "지도등록완료";
     }
-//    @GetMapping("/select")
-//    public boolean findMap(String name){
-//        return mapService.findMap(name);
-//    }
+    @GetMapping("/find/{storeName}")
+    public MapEntity findMap(@PathVariable("storeName") String storeName){
+        MapEntity mapEntity = mapService.findMap(storeName);
+        return mapEntity;
+    }
+    @GetMapping("/findAll")
+    public List<MapEntity> findMapAll(){
+        return mapService.findMapAll();
+    }
 
 }

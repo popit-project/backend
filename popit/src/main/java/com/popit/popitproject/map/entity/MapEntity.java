@@ -1,6 +1,8 @@
 package com.popit.popitproject.map.entity;
 
 import lombok.*;
+import org.hibernate.mapping.Map;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
@@ -9,18 +11,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-
+@Entity(name = "map")
+@EntityListeners(AuditingEntityListener.class)
 public class MapEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = true,name = "storeName")
+    private String storeName;
 
-    private String store_name;
-    private String store_phone; //가게 연락처
-    private String store_address; //가게 주소
-    private String store_time; // 가게 운영시간
-    private String latitude;
-    private String longitude;
+    private String storePhone; //가게 연락처
+    private String storeAddress; //가게 주소
+    private String storeTime; // 가게 운영시간
+    private Double latitude;
+    private Double longitude;
 
 }

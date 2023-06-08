@@ -10,10 +10,10 @@ import lombok.*;
 public class MapDTO {
 
     private Long id;
-    private String store_name;
-    private String store_phone;
-    private String store_address; //가게 주소
-    private String store_time; // 가게 운영시간
-    private String latitude;
-    private String longitude;
+    private String storeName;
+    private String storePhone;
+    private String storeAddress; //가게 주소
+    private String storeTime; // 가게 운영시간
+    private Double latitude;
+    private Double longitude;
 }
