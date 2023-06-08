@@ -1,16 +1,1 @@
-server:
-  port: 8081
 
-spring:
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://popitdb.cljjw1huggky.ap-northeast-2.rds.amazonaws.com:3306/popit_set_DB
-    username: popitAdmin
-    password: popit123
-
-  jpa:
-    database-platform: org.hibernate.dialect.MariaDBDialect
-    open-in-view: false
-    show-sql: true
-    hibernate:
-      ddl-auto: update
