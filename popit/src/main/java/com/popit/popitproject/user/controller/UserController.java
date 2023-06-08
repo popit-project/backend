@@ -20,9 +20,14 @@ public class UserController {
         return userService.registerUser(userDto);
     }
 
-    @PostMapping("/validate-email")
-    public boolean validateEmail(@RequestParam String userId, @RequestParam String token) {
-        return userService.validateEmail(userId, token);
+    @GetMapping("/validate-email")
+    public String validateEmail(@RequestParam String userId, @RequestParam String code) {
+        boolean isVerified = userService.validateEmail(userId, code);
+        if (isVerified) {
+            return "인증이 완료 되었습니다.";
+        } else {
+            return "인증에 실패 하였습니다. 다시 시도해 주세요.";
+        }
     }
 
     @PostMapping("/login")
