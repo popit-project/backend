@@ -24,4 +24,6 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String phone;
+
+    private String token;
 }
