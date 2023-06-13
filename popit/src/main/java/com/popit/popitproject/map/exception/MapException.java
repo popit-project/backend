@@ -1,5 +1,13 @@
 package com.popit.popitproject.map.exception;
 
-public class MapException {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@AllArgsConstructor
+public enum MapException {
+
+
 
 }

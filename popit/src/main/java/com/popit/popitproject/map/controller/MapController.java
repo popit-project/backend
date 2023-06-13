@@ -21,10 +21,10 @@ public class MapController {
     @PostMapping("/insert")
     public String insertMap(@RequestBody MapDTO mapDto) {
         mapService.creatMap(mapDto.getId(),mapDto.getStoreAddress(),mapDto.getStoreName(),mapDto.getStorePhone(),
-                mapDto.getStoreTime(),mapDto.getLongitude(),mapDto.getLatitude());
+                mapDto.getStoreDay(), mapDto.getStoreTime(),mapDto.getLongitude(),mapDto.getLatitude());
         return "지도등록완료";
     }
-    @GetMapping("/find/{storeName}")
+    @GetMapping("/search/{storeName}")
     public MapEntity findMap(@PathVariable("storeName") String storeName){
         MapEntity mapEntity = mapService.findMap(storeName);
         return mapEntity;

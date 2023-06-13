@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface MapRepository extends JpaRepository<MapEntity, Long> {
     Optional<MapEntity> findByStoreName(String storeName);
 
+    boolean existsByStoreName(String storeName);
+
 }
