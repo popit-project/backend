@@ -7,10 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PopitApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PopitApplication.class, args);//test
-		//test
+		SpringApplication.run(PopitApplication.class, args);
 
-		//testtestasdasd
 	}
 
 }
