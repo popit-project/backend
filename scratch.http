@@ -1,22 +1,60 @@
 ### 회원가입 API
-// POST http://localhost:8081/user/register
-POST http://3.34.149.107:8081/user/register
+// POST http://localhost:8082/api/user/register
+POST http://3.34.149.107:8082/api/user/register
 Content-Type: application/json
 
 {
-  "userId": "testID3",
-  "password": "testPW3",
-  "nickname": "testnickname3",
-  "email" : "test2@test.com",
-  "phone": "010-3333-3333"
+  "userId": "testID2",
+  "password": "testPW2",
+  "nickname": "testnickname2",
+  "email" : "kys1064@naver.com",
+  "phone": "010-2222-2222"
 }
 
+### 이메일 인증
+GET http://3.34.149.107:8082/api/user/validate-email?userId=testID2&code=724635
+// GET http://localhost:8082/api/user/validate-email?userId=testID2&code=106208
+
+
 ### 로그인 API
-POST http://3.34.149.107:8081/user/login
-// POST http://localhost:8081/user/login
+POST http://3.34.149.107:8082/api/user/login
+//POST http://localhost:8082/user/login
 Content-Type: application/json
 
 {
-"userId": "testID6",
-"password": "testPW6"
+"userId": "UN",
+"password": "123"
+}
+
+### 내정보 API
+// GET http://localhost:8082/user/info?userId=UN
+GET http://3.34.149.107:8082/api/user/info?userId=UN
+Content-Type: application/json
+
+### ID 찾기 API
+//POST http://localhost:8082/user/find-id
+POST http://3.34.149.107:8082/api/user/find-id
+Content-Type: application/json
+
+{
+  "email": "pon5100@naver.com"
+}
+
+### 비밀번호 재설정 API
+POST http://localhost:8082/user/reset-password
+Content-Type: application/json
+
+{
+  "email": "pon5100@naver.com"
+}
+
+### 비밀번호 변경 API
+//POST http://localhost:8082/user/change-password
+POST http://3.34.149.107:8082/api/user/change-password
+Content-Type: application/json
+
+{
+  "userId": "UN",
+  "oldPassword": "123",
+  "newPassword": "test1"
 }

@@ -1,6 +1,9 @@
 package com.popit.popitproject.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.popit.popitproject.user.model.ChangePasswordRequest;
+import com.popit.popitproject.user.model.FindIdRequest;
+import com.popit.popitproject.user.model.ResetPasswordRequest;
 import com.popit.popitproject.user.model.UserDTO;
 import com.popit.popitproject.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +72,62 @@ public class UserControllerTest {
         mockMvc.perform(post("/user/login")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("내 정보 보기 Test")
+    public void testGetUserInfo() throws Exception {
+        when(userService.getUserInfo(user.getUserId())).thenReturn(user);
+
+        mockMvc.perform(get("/user/info")
+                        .param("userId", user.getUserId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("ID 찾기 Test")
+    public void testFindUserId() throws Exception {
+        FindIdRequest findIdRequest = new FindIdRequest();
+        findIdRequest.setEmail("testEmail@popit.com");
+
+        when(userService.findUserIdByEmail(findIdRequest.getEmail())).thenReturn(user.getUserId());
+
+        mockMvc.perform(post("/user/find-id")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(findIdRequest)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("비밀번호 재설정 Test")
+    public void testResetPassword() throws Exception {
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
+        resetPasswordRequest.setEmail("testEmail@popit.com");
+
+        when(userService.resetPasswordByEmail(resetPasswordRequest.getEmail())).thenReturn(true);
+
+        mockMvc.perform(post("/user/reset-password")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(resetPasswordRequest)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 Test")
+    public void testChangePassword() throws Exception {
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setUserId("testUser");
+        changePasswordRequest.setOldPassword("testPassword");
+        changePasswordRequest.setNewPassword("newTestPassword");
+
+        when(userService.changePassword(changePasswordRequest.getUserId(),
+                changePasswordRequest.getOldPassword(),
+                changePasswordRequest.getNewPassword())).thenReturn(true);
+
+        mockMvc.perform(post("/user/change-password")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(changePasswordRequest)))
                 .andExpect(status().isOk());
     }
 }
