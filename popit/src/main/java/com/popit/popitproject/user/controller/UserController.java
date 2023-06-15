@@ -1,12 +1,12 @@
 package com.popit.popitproject.user.controller;
 
-import com.popit.popitproject.user.model.UserDTO;
+import com.popit.popitproject.user.model.*;
 import com.popit.popitproject.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/user")
 public class UserController {
     private final UserService userService;
 
@@ -31,7 +31,50 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public boolean loginUser(@RequestBody UserDTO userDto) {
-        return userService.login(userDto.getUserId(), userDto.getPassword());
+    public String loginUser(@RequestBody LoginRequest loginRequest) {
+        boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
+        if (isLoggedIn) {
+            return "로그인에 성공하였습니다.";
+        } else {
+            return "로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.";
+        }
+    }
+
+    @GetMapping("/info")
+    public UserDTO getUserInfo(@RequestParam String userId) {
+        return userService.getUserInfo(userId);
+    }
+
+    @PostMapping("/find-id")
+    public String findUserId(@RequestBody FindIdRequest findIdRequest) {
+        String userId = userService.findUserIdByEmail(findIdRequest.getEmail());
+        if (userId != null) {
+            return "당신의 아이디는: " + userId;
+        } else {
+            return "해당 이메일로 가입된 계정을 찾을 수 없습니다.";
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        boolean isReset = userService.resetPasswordByEmail(resetPasswordRequest.getEmail());
+        if (isReset) {
+            return "새로운 비밀번호가 이메일로 전송되었습니다.";
+        } else {
+            return "비밀번호 재설정에 실패했습니다. 다시 시도해 주세요.";
+        }
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        boolean isChanged = userService.changePassword(
+                changePasswordRequest.getUserId(),
+                changePasswordRequest.getOldPassword(),
+                changePasswordRequest.getNewPassword());
+        if (isChanged) {
+            return "비밀번호가 성공적으로 변경되었습니다.";
+        } else {
+            return "비밀번호 변경에 실패했습니다. 기존 비밀번호를 확인해주세요.";
+        }
     }
 }

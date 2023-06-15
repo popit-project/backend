@@ -71,4 +71,63 @@ public class UserService {
         }
         return userEntity.getPassword().equals(password);
     }
+
+    public UserDTO getUserInfo(String userId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (userEntity == null) {
+            throw new IllegalArgumentException("가입 된 회원이 아닙니다.");
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userEntity.getUserId());
+        userDTO.setNickname(userEntity.getNickname());
+        userDTO.setEmail(userEntity.getEmail());
+        userDTO.setPhone(userEntity.getPhone());
+
+        return userDTO;
+    }
+
+    public String findUserIdByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) {
+            return userEntity.getUserId();
+        }
+        return null;
+    }
+
+    public boolean resetPasswordByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) {
+            // Generate a random alphanumeric string with length 8
+            String newPassword = generateRandomAlphanumericString(8);
+            userEntity.setPassword(newPassword);
+            userRepository.save(userEntity);
+            emailService.sendEmail(userEntity.getEmail(), "POPIT-비밀번호 재설정",
+                    "새로운 비밀번호는 " + newPassword + " 입니다.");
+            return true;
+        }
+        return false;
+    }
+
+    private String generateRandomAlphanumericString(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder result = new StringBuilder(length);
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            result.append(characters.charAt(index));
+        }
+        return result.toString();
+    }
+
+    public boolean changePassword(String userId, String oldPassword, String newPassword) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        if (userEntity != null && userEntity.getPassword().equals(oldPassword)) {
+            userEntity.setPassword(newPassword);
+            userRepository.save(userEntity);
+            return true;
+        }
+        return false;
+    }
 }
