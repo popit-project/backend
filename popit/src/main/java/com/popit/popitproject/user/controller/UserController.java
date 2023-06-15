@@ -35,7 +35,7 @@ public class UserController {
         }
     }
 
-    // 변경필요 사항23333333
+    // 변경필요 44
     @PostMapping("/login")
     public String loginUser(@RequestBody LoginRequest loginRequest) {
         boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
