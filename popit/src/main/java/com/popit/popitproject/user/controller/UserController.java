@@ -55,7 +55,7 @@ public class UserController {
     public String findUserId(@RequestBody FindIdRequest findIdRequest) {
         String userId = userService.findUserIdByEmail(findIdRequest.getEmail());
         if (userId != null) {
-            return "당신의 아이디는: " + userId;
+            return "ID: " + userId;
         } else {
             return "해당 이메일로 가입된 계정을 찾을 수 없습니다.";
         }
