@@ -3,6 +3,8 @@ package com.popit.popitproject.user.service;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.model.UserDTO;
 import com.popit.popitproject.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,8 @@ import java.util.Random;
 
 @Service
 public class UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
     private final EmailService emailService;
 
