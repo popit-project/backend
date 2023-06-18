@@ -1,10 +1,13 @@
 package com.popit.popitproject.user.controller;
 
 import com.popit.popitproject.user.model.*;
+import com.popit.popitproject.user.service.JwtTokenService;
 import com.popit.popitproject.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-
     private final UserService userService;
+
+    @Autowired
+    private JwtTokenService jwtTokenService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -35,14 +40,15 @@ public class UserController {
         }
     }
 
-    // 변경필요 55
     @PostMapping("/login")
-    public String loginUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
         if (isLoggedIn) {
-            return "로그인에 성공하였습니다.";
+            UserDTO user = userService.getUserInfo(loginRequest.getUserId());
+            String token = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
+            return ResponseEntity.ok("토큰: " + token);
         } else {
-            return "로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.");
         }
     }
 
