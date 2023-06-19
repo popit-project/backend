@@ -7,4 +7,11 @@ import lombok.Setter;
 @Setter
 public class FindIdRequest {
     private String email;
+
+    public FindIdRequest() {
+    }
+
+    public FindIdRequest(String email) {
+        this.email = email;
+    }
 }

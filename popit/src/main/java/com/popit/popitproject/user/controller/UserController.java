@@ -2,6 +2,7 @@ package com.popit.popitproject.user.controller;
 
 import com.popit.popitproject.user.model.*;
 import com.popit.popitproject.user.service.JwtTokenService;
+import com.popit.popitproject.user.service.TokenBlacklistService;
 import com.popit.popitproject.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("api/user")
@@ -24,6 +27,9 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
     @PostMapping("/register")
     public UserDTO registerUser(@RequestBody UserDTO userDto) {
@@ -58,12 +64,12 @@ public class UserController {
     }
 
     @PostMapping("/find-id")
-    public String findUserId(@RequestBody FindIdRequest findIdRequest) {
+    public ResponseEntity<String> findUserId(@RequestBody FindIdRequest findIdRequest) {
         String userId = userService.findUserIdByEmail(findIdRequest.getEmail());
         if (userId != null) {
-            return "ID: " + userId;
+            return ResponseEntity.ok("ID: " + userId);
         } else {
-            return "해당 이메일로 가입된 계정을 찾을 수 없습니다.";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 이메일로 가입된 계정을 찾을 수 없습니다.");
         }
     }
 
@@ -79,6 +85,7 @@ public class UserController {
 
     @PostMapping("/change-password")
     public String changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        System.out.println("Received userId: " + changePasswordRequest.getUserId());
         boolean isChanged = userService.changePassword(
                 changePasswordRequest.getUserId(),
                 changePasswordRequest.getOldPassword(),
@@ -88,5 +95,15 @@ public class UserController {
         } else {
             return "비밀번호 변경에 실패했습니다. 기존 비밀번호를 확인해주세요.";
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null) {
+            tokenBlacklistService.blacklistToken(token);
+            return ResponseEntity.ok("로그아웃 성공");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
     }
 }

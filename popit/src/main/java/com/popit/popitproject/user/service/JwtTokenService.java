@@ -80,4 +80,13 @@ public class JwtTokenService {
 
         return new UsernamePasswordAuthenticationToken(userId, email, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            return claims.getBody().getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
 }
