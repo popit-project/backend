@@ -1,10 +1,12 @@
 package com.popit.popitproject.store.entity;
 
+import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.store.model.StoreBusinessEnteredDTO;
 import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.user.entity.UserEntity;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,6 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -49,6 +52,10 @@ public class StoreBusinessEntity {
 
     @Column
     private String businessLicenseNumber; // 사업자 등록번호
+
+    // 소식작성
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "store") // 수정된 매핑 정보
+    private List<NewsEntity> news;
 
     @Column
     private Timestamp enteredAt; // 입점 날짜
