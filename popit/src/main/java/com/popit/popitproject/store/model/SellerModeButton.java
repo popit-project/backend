@@ -1,4 +1,4 @@
-package com.popit.popitproject.seller;
+package com.popit.popitproject.store.model;
 
 
 public enum SellerModeButton {

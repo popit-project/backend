@@ -1,6 +1,6 @@
 package com.popit.popitproject.store.controller;
 
-import com.popit.popitproject.store.model.StoreCreateDTO;
+import com.popit.popitproject.store.model.StoreBusinessEnteredDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,23 +8,19 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StoreCreateResponse {
 
-    private Long id; // 스토어 이름
-    private String storeId;
+    private Long sellerId;
     private String storeName; // 스토어 이름
     private String storeType; // 사업 종류
-    private String storeLocation; // 스토어 주소
+    private String businessLicenseAddress; // 스토어 주소
     private String businessLicenseNumber; // 사업자 등록번호
-    private String businessLicenseImage; // 사업자 등록증 이미지
 
-    public static StoreCreateResponse fromDTO(StoreCreateDTO storeCreateDTO) {
+    public static StoreCreateResponse fromDTO(StoreBusinessEnteredDTO storeBusinessEnteredDTO) {
         return new StoreCreateResponse(
-            storeCreateDTO.getId(),
-            storeCreateDTO.getStoreId(),
-            storeCreateDTO.getStoreName(),
-            storeCreateDTO.getStoreType(),
-            storeCreateDTO.getStoreLocation(),
-            storeCreateDTO.getBusinessLicenseNumber(),
-            storeCreateDTO.getBusinessLicenseImage()
+            storeBusinessEnteredDTO.getSellerId(),
+            storeBusinessEnteredDTO.getStoreName(),
+            storeBusinessEnteredDTO.getStoreType(),
+            storeBusinessEnteredDTO.getBusinessLicenseAddress(),
+            storeBusinessEnteredDTO.getBusinessLicenseNumber()
         );
     }
 

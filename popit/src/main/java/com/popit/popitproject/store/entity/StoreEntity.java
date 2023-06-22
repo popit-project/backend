@@ -1,14 +1,16 @@
 package com.popit.popitproject.store.entity;
 
-import com.popit.popitproject.seller.SellerEntity;
-import com.popit.popitproject.store.model.StoreCreateDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.store.model.StoreType;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,65 +22,56 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Setter
-@Entity(name = "store_entity")
+@Entity(name = "store")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class StoreEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String storeId;
+    // 매장 주인(사업자)
+    @OneToOne
+    @JoinColumn(name = "seller_id")
+    private StoreBusinessEntity seller;
 
     @Column
-    private String storeName; // 스토어 이름
+    private String storeName; // 사업자 가게명
 
     @Column
     @Enumerated(EnumType.STRING)
     private StoreType storeType; // 사업 종류
 
-    @Column
-    private String storeLocation; // 스토어 주소
+    // 새로운 팝업에 대한 수정/등록
+    private String image; // 매장 이미지
 
-    @Column
-    private String businessLicenseNumber; // 사업자 등록번호
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime openTime; // 운영시간
 
-    @Column
-    private String businessLicenseImage; // 사업자 등록증 이미지
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime closeTime;
 
-    @OneToMany(mappedBy = "id")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate openDate; // 운영기간
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate closeDate;
+
+    private String storeAddress; // 매장 주소
+
+    // map 등록을 위한 위경도
+    @Column(name = "x")
+    private Double x;
+
+    @Column(name = "y")
+    private Double y;
+
+    // 소식작성
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "store") // 수정된 매핑 정보
     private List<NewsEntity> news;
 
-    // 서비스 단에서 쓰기 위해 변환을 위한 메서드
-    public static StoreEntity of(String storeName, String storeType, String storeLocation,
-        String businessLicenseNumber, String businessLicenseImage) {
-
-        StoreEntity storeEntity = new StoreEntity();
-
-        storeEntity.setStoreName(storeName);
-        storeEntity.setStoreType(StoreType.valueOf(storeType));
-        storeEntity.setStoreLocation(storeLocation);
-        storeEntity.setBusinessLicenseNumber(businessLicenseNumber);
-        storeEntity.setBusinessLicenseImage(businessLicenseImage);
-        storeEntity.setStoreId(UUID.randomUUID(), storeName);
-
-
-        return storeEntity;
-    }
-
-    public void setStoreId(UUID uuid, String storeName) {
-        int hashCode = uuid.hashCode();
-        long absoluteValue = Math.abs((long) hashCode);
-        // 스토어 이름과 UUID 해시값을 조합하여 storeId 생성
-        this.storeId = storeName + absoluteValue;
-    }
-
 }
-
