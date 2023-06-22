@@ -1,75 +1,45 @@
 package com.popit.popitproject.user.service;
 
 import com.popit.popitproject.user.entity.UserEntity;
-import com.popit.popitproject.user.model.UserDTO;
 import com.popit.popitproject.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.util.Collection;
+import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor
-public class UserService {
+public class CustomUserDetailsService implements UserDetailsService {
+
     private final UserRepository userRepository;
-//    private final EmailService emailService;
 
-//    @Autowired
-//    public UserService(UserRepository userRepository, EmailService emailService) {
-//        this.userRepository = userRepository;
-//        this.emailService = emailService;
-//    }
-
-    public UserDTO registerUser(UserDTO userDto) {
-        UserEntity existingUser = userRepository.findByUserId(userDto.getUserId());
-        if (existingUser != null) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        }
-
-        UserEntity existingEmail = userRepository.findByEmail(userDto.getEmail());
-        if (existingEmail != null) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        }
-
-        UserEntity newUser = new UserEntity();
-        newUser.setUserId(userDto.getUserId());
-        newUser.setPassword(userDto.getPassword());
-        newUser.setNickname(userDto.getNickname());
-        newUser.setEmail(userDto.getEmail());
-        newUser.setPhone(userDto.getPhone());
-
-        Random random = new Random();
-        int token = 100000 + random.nextInt(900000);
-        newUser.setToken(String.valueOf(token));
-
-        userRepository.save(newUser);
-
-//        emailService.sendEmail(newUser.getEmail(), "POPIT-이메일 인증 요청",
-//                "인증번호 6자리를 입력해 주세요: " + token);
-
-        UserDTO result = new UserDTO();
-        result.setUserId(newUser.getUserId());
-        result.setPassword(newUser.getPassword());
-        result.setNickname(newUser.getNickname());
-        result.setEmail(newUser.getEmail());
-        result.setPhone(newUser.getPhone());
-
-        return result;
+    @Autowired
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public boolean validateEmail(String userId, String token) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
-        if (userEntity == null) {
-            return false;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByUserId(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(username);
         }
-        return userEntity.getToken().equals(token);
+        return new User(user.getUserId(), user.getPassword(), getAuthorities(user));
     }
 
-    public boolean login(String userId, String password) {
-        UserEntity userEntity = userRepository.findByUserId(userId);
-        if (userEntity == null) {
-            return false;
+    private Collection<? extends GrantedAuthority> getAuthorities(UserEntity user) {
+        if (user.getRoles() != null) {
+            String[] roles = user.getRoles().stream()
+                    .map(UserEntity.Role::name)
+                    .toArray(String[]::new);
+            return AuthorityUtils.createAuthorityList(roles);
         }
-        return userEntity.getPassword().equals(password);
+        return Collections.emptyList();
     }
 }

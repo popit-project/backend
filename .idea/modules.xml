@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.popit.popit.iml" filepath="$PROJECT_DIR$/.idea/modules/com.popit.popit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.popit.popit.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.popit.popit.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.popit.popit.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.popit.popit.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/popit.iml" filepath="$PROJECT_DIR$/.idea/popit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/popit.popit.main.iml" filepath="$PROJECT_DIR$/.idea/modules/popit.popit.main.iml" />
+    </modules>
+  </component>
+</project>
