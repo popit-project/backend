@@ -1,7 +1,7 @@
 package com.popit.popitproject.user.service;
 
-import com.popit.popitproject.user.entity.UserEntity; // UserEntity 클래스의 패키지에 맞게 임포트해주세요.
-import com.popit.popitproject.user.repository.UserRepository; // UserRepository 인터페이스의 패키지에 맞게 임포트해주세요.
+import com.popit.popitproject.user.entity.UserEntity;
+import com.popit.popitproject.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
