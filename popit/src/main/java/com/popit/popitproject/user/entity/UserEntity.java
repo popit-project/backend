@@ -1,5 +1,7 @@
 package com.popit.popitproject.user.entity;
 
+import com.popit.popitproject.store.entity.StoreBusinessEntity;
+import com.popit.popitproject.store.model.SellerModeButton;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
@@ -35,4 +37,12 @@ public class UserEntity {
         ROLE_USER,
         ROLE_SELLER
     }
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "seller_id")
+    private StoreBusinessEntity seller;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private SellerModeButton sellerModeButton = SellerModeButton.BUTTON_DISPLAY_OFF;
 }

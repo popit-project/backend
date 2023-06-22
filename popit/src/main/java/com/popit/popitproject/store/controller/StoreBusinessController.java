@@ -41,7 +41,8 @@ public class StoreBusinessController {
     public ResponseEntity<?> sellerEntered(@RequestBody EnteredRequest enteredRequest) {
 
         // 유저 정보 찾기
-        UserEntity user = userRepository.findByEmail("user3@na.com").orElseThrow(()->new RuntimeException("사용자 정보 없음"));
+        UserEntity user = userRepository.findByEmail("user3@na.com");
+//            .orElseThrow(()->new RuntimeException("사용자 정보 없음"));
         StoreBusinessEnteredDTO storeBusinessEnteredDTO = enteredRequest.toDTO(enteredRequest);
 
         // 리퀘스트에서 가져온 값을 디티오에 가져옴
@@ -94,8 +95,7 @@ public class StoreBusinessController {
     public ResponseEntity<?> isUserModeButtonVisible() {
 
         // 사용자 정보 조회
-        UserEntity user = userRepository.findByEmail("b244wer3w@naver.com")
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        UserEntity user = userRepository.findByEmail("b244wer3w@naver.com"));
 
         // 원래 유저 페이지였을 경우
         if (user.getSellerModeButton() != SellerModeButton.BUTTON_CLICK_TO_USER_MODE) {
