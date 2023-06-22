@@ -34,12 +34,16 @@ public class UserService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
+        if (!userDto.getPassword().equals(userDto.getPasswordCheck())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
         UserEntity newUser = new UserEntity();
         newUser.setUserId(userDto.getUserId());
         newUser.setPassword(userDto.getPassword());
-        newUser.setNickname(userDto.getNickname());
         newUser.setEmail(userDto.getEmail());
         newUser.setPhone(userDto.getPhone());
+        newUser.getRoles().add(UserEntity.Role.ROLE_USER);
 
         Random random = new Random();
         int token = 100000 + random.nextInt(900000);
@@ -53,7 +57,6 @@ public class UserService {
         UserDTO result = new UserDTO();
         result.setUserId(newUser.getUserId());
         result.setPassword(newUser.getPassword());
-        result.setNickname(newUser.getNickname());
         result.setEmail(newUser.getEmail());
         result.setPhone(newUser.getPhone());
 
@@ -85,7 +88,6 @@ public class UserService {
 
         UserDTO userDTO = new UserDTO();
         userDTO.setUserId(userEntity.getUserId());
-        userDTO.setNickname(userEntity.getNickname());
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setPhone(userEntity.getPhone());
 
@@ -133,5 +135,39 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    public UserDTO findByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(userEntity.getUserId());
+            userDTO.setEmail(userEntity.getEmail());
+            return userDTO;
+        }
+        return null;
+    }
+
+    public UserDTO registerGoogleUser(String email) {
+        UserEntity newUser = new UserEntity();
+        newUser.setEmail(email);
+        newUser.getRoles().add(UserEntity.Role.ROLE_USER);
+
+        UserEntity existingEmail = userRepository.findByEmail(email);
+        if (existingEmail != null) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
+        newUser.setUserId(generateRandomAlphanumericString(8)); // 임시 user ID 생성
+        newUser.setPassword(generateRandomAlphanumericString(8)); // 임시 비밀번호 생성
+        newUser.setPhone("000-0000-0000"); // 임시 전화번호 설정
+
+        userRepository.save(newUser);
+
+        UserDTO result = new UserDTO();
+        result.setEmail(newUser.getEmail());
+        result.setUserId(newUser.getUserId());
+
+        return result;
     }
 }

@@ -32,8 +32,9 @@ public class UserController {
     private TokenBlacklistService tokenBlacklistService;
 
     @PostMapping("/register")
-    public UserDTO registerUser(@RequestBody UserDTO userDto) {
-        return userService.registerUser(userDto);
+    public RegistrationResultDTO registerUser(@RequestBody UserDTO userDto) {
+        UserDTO registeredUser = userService.registerUser(userDto);
+        return new RegistrationResultDTO(registeredUser, "회원가입에 성공하였습니다.");
     }
 
     @GetMapping("/validate-email")

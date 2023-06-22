@@ -19,4 +19,3 @@ public class TokenBlacklistService {
         return blacklistedTokens.contains(token);
     }
 }
-
