@@ -26,10 +26,10 @@ public class StoreEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    // 입점신청 : 고정값
-    @Column(unique = true)
-    private String sellerId; // 판매자 ID
+    // 매장 주인(사업자)
+    @OneToOne
+    @JoinColumn(name = "seller_id")
+    private StoreBusinessEntity seller;
 
     @Column(name = "store_name")
     private String storeName;
@@ -37,15 +37,6 @@ public class StoreEntity implements Serializable{
     @Column
     @Enumerated(EnumType.STRING)
     private StoreType storeType; // 사업 종류
-
-    @Column
-    private String businessLicenseAddress; // 사업자 등록증 내 주소
-
-    @Column
-    private String businessLicenseNumber; // 사업자 등록번호
-
-    @Column
-    private Timestamp enteredAt; // 입점 날짜
 
     @Column
     private Timestamp updatedAt;
