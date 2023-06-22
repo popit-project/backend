@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                String userId = jwtTokenService.getSellerIdFromToken(token);
+                String userId = String.valueOf(jwtTokenService.getSellerIdFromToken(token));
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 if (userId.equals("seller")) {
                     authorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));

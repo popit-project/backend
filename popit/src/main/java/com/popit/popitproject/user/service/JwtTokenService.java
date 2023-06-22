@@ -33,12 +33,12 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public String generateSellerToken(String sellerId, String email) {
+    public String generateSellerToken(Long sellerId, String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         return Jwts.builder()
-                .setSubject(sellerId)
+                .setSubject(sellerId.toString())
                 .claim("email", email)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
@@ -49,7 +49,7 @@ public class JwtTokenService {
     public String refreshSellerToken(String refreshToken) {
         if (validateToken(refreshToken)) {
             String email = getEmailFromToken(refreshToken);
-            String sellerId = getSellerIdFromToken(refreshToken);
+            Long sellerId = getSellerIdFromToken(refreshToken);
             return generateSellerToken(sellerId, email);
         }
         return null;
@@ -74,13 +74,13 @@ public class JwtTokenService {
         return claims.getBody().getSubject();
     }
 
-    public String getSellerIdFromToken(String token) {
+    public Long getSellerIdFromToken(String token) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
-        return claims.getBody().getSubject();
+        return Long.parseLong(claims.getBody().getSubject());
     }
 
     public Authentication getAuthentication(String token) {
-        String userId = getSellerIdFromToken(token);
+        String userId = getUserIdFromToken(token);
         String email = getEmailFromToken(token);
 
         return new UsernamePasswordAuthenticationToken(userId, email, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
