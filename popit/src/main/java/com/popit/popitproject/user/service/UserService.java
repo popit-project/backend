@@ -103,7 +103,6 @@ public class UserService {
     public boolean resetPasswordByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
         if (userEntity != null) {
-            // Generate a random alphanumeric string with length 8
             String newPassword = generateRandomAlphanumericString(8);
             userEntity.setPassword(newPassword);
             userRepository.save(userEntity);
@@ -126,6 +125,7 @@ public class UserService {
     }
 
     public boolean changePassword(String userId, String oldPassword, String newPassword) {
+        System.out.println("UserId: " + userId);
         UserEntity userEntity = userRepository.findByUserId(userId);
         if (userEntity != null && userEntity.getPassword().equals(oldPassword)) {
             userEntity.setPassword(newPassword);
