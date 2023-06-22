@@ -13,4 +13,3 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     List<MapMapping> findAllBy();
     List<MapMapping> findByStoreType(StoreType storeType);
 }
-

@@ -90,4 +90,3 @@ public class StoreEntity implements Serializable{
                 .build();
     }
 }
-
