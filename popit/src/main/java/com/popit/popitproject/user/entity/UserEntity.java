@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "users_new")
+@Table(name = "users")
 @Getter
 @Setter
 public class UserEntity {
