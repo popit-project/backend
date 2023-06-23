@@ -53,9 +53,9 @@ public class StoreBusinessController {
 
         // 변환된 이용해서 리스펀스를 초기화
         ResponseDTO<StoreBusinessEnteredResponse> responseDTO
-            = ResponseDTO.<StoreBusinessEnteredResponse>builder()
-            .data(storeBusinessService.findStoreBusinessBySellerId(seller))
-            .build();
+                = ResponseDTO.<StoreBusinessEnteredResponse>builder()
+                .data(storeBusinessService.findStoreBusinessBySellerId(seller))
+                .build();
         // ResponseDto 리턴
 
         return ResponseEntity.ok().body(responseDTO);
@@ -67,27 +67,27 @@ public class StoreBusinessController {
      *
      * @return CREATED(200, ok), storeName
      */
-    @GetMapping("/sellerMode/{sellerId}")
-    public ResponseEntity<?> sellerMode(HttpServletRequest request, @PathVariable String sellerId) {
-
-        UserEntity user = (UserEntity) request.getSession().getAttribute("user");
-
-        // 판매자 모드로 전환
-        storeBusinessService.switchToSellerMode(user);
-
-        // 판매자용 토큰 발급
-        String sellerToken = jwtTokenService.generateSellerToken(user.getSeller().getSellerId(), user.getEmail());
-
-        // 전환된 셀러 정보에 접근하여 필요한 처리 수행
-        StoreEntity store = storeRepository.findBySeller(user.getSeller())
-            .orElseThrow(() -> new IllegalArgumentException("사용자의 매장을 찾을 수 없습니다."));
-
-        String message = "로그인된 사용자: " + user.getEmail() + "\n"
-            + "스토어 이름: " + store.getSeller().getStoreName() + "\n"
-            + "판매자용 토큰 : " + sellerToken;
-
-        return ResponseEntity.ok().body(message);
-    }
+//    @GetMapping("/sellerMode/{sellerId}")
+//    public ResponseEntity<?> sellerMode(HttpServletRequest request, @PathVariable String sellerId) {
+//
+//        UserEntity user = (UserEntity) request.getSession().getAttribute("user");
+//
+//        // 판매자 모드로 전환
+//        storeBusinessService.switchToSellerMode(user);
+//
+//        // 판매자용 토큰 발급
+//        String sellerToken = jwtTokenService.generateSellerToken(user.getSeller().getSellerId(), user.getEmail());
+//
+//        // 전환된 셀러 정보에 접근하여 필요한 처리 수행
+//        StoreEntity store = storeRepository.findBySeller(user.getSeller())
+//                .orElseThrow(() -> new IllegalArgumentException("사용자의 매장을 찾을 수 없습니다."));
+//
+//        String message = "로그인된 사용자: " + user.getEmail() + "\n"
+//                + "스토어 이름: " + store.getSeller().getStoreName() + "\n"
+//                + "판매자용 토큰 : " + sellerToken;
+//
+//        return ResponseEntity.ok().body(message);
+//    }
 
     // TODO : test 필요, 유저모드로 전환시 판매자용 토큰 비동기 방식으로 만료 처리
     // 유저 모드로 다시 전환
@@ -95,7 +95,7 @@ public class StoreBusinessController {
     public ResponseEntity<?> isUserModeButtonVisible() {
 
         // 사용자 정보 조회
-        UserEntity user = userRepository.findByEmail("b244wer3w@naver.com"));
+        UserEntity user = userRepository.findByEmail("b244wer3w@naver.com");
 
         // 원래 유저 페이지였을 경우
         if (user.getSellerModeButton() != SellerModeButton.BUTTON_CLICK_TO_USER_MODE) {
