@@ -183,4 +183,13 @@ public class UserService {
         }
     }
 
+    public boolean changeUserInfo(String email, String newNickname) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) {
+            userEntity.setNickname(newNickname);
+            userRepository.save(userEntity);
+            return true;
+        }
+        return false;
+    }
 }

@@ -125,4 +125,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
         }
     }
+
+    @PostMapping("/changeUserInfo")
+    public String changeNickname(@RequestBody ChangeUserInfoRequest changeNicknameRequest) {
+        boolean isChanged = userService.changeUserInfo(
+                changeNicknameRequest.getEmail(),
+                changeNicknameRequest.getNewNickname());
+        if (isChanged) {
+            return "닉네임이 성공적으로 변경되었습니다.";
+        } else {
+            return "닉네임 변경에 실패했습니다. 이메일을 확인해주세요.";
+        }
+    }
 }
