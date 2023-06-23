@@ -48,5 +48,15 @@ public class ReviewService {
         List<Object[]> review =reviewRepository.findCommentsAndUserIdsByStoreName(storeName);
         return review;
     }
+    @Transactional
+    public int getReviewCount(String storeName){
+        List<Object[]> review =reviewRepository.findCommentsAndUserIdsByStoreName(storeName);
+        int count = 0;
+        for(int i = 0 ; i< review.size();i++){
+            count+=i;
+        }
+
+        return count;
+    }
 
 }

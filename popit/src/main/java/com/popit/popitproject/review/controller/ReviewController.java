@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/review")
+@RequestMapping("/api/review")
 public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewRepository reviewRepository;
@@ -26,6 +26,11 @@ public class ReviewController {
     @GetMapping("/read/{storeName}/comment")
     public List<Object[]> getReviewByStoreName(@PathVariable String storeName){
         return reviewService.getReviewByStoreName(storeName);
+    }
+
+    @GetMapping("/count/{storeName}")
+    public int getReviewCount(@PathVariable String storeName){
+        return reviewService.getReviewCount(storeName);
     }
 
 
