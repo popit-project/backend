@@ -27,3 +27,7 @@ spring:
           auth: true
           starttls:
             enable: true
+google:
+  client:
+    id: ${GOOGLE_ID}
+    pw: ${GOOGLE_PW}
