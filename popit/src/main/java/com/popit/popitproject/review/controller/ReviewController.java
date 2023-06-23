@@ -1,6 +1,7 @@
 package com.popit.popitproject.review.controller;
 
 import com.popit.popitproject.review.model.CreateReviewRequest;
+import com.popit.popitproject.review.model.ReviewDto;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -15,22 +16,22 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewRepository reviewRepository;
-    @PostMapping("/write/{storeName}")
-    public ResponseEntity<String> createComment(@PathVariable String storeName, @RequestBody CreateReviewRequest createReviewRequest) {
-        createReviewRequest.setStoreName(storeName);
+    @PostMapping("/write/{storeId}")
+    public ResponseEntity<String> createComment(@PathVariable Long storeId, @RequestBody CreateReviewRequest createReviewRequest) {
+        createReviewRequest.setStoreId(storeId);
         reviewService.createComment(createReviewRequest);
 
         return ResponseEntity.ok("review write success!");
     }
 
-    @GetMapping("/read/{storeName}/comment")
-    public List<Object[]> getReviewByStoreName(@PathVariable String storeName){
-        return reviewService.getReviewByStoreName(storeName);
+    @GetMapping("/read/{storeId}/comment")
+    public List<ReviewDto> getReviewsByStoreId(@PathVariable Long storeId) {
+        return reviewService.getReviewByStoreId(storeId);
     }
 
-    @GetMapping("/count/{storeName}")
-    public int getReviewCount(@PathVariable String storeName){
-        return reviewService.getReviewCount(storeName);
+    @GetMapping("/count/{storeId}")
+    public Long getReviewCount(@PathVariable Long storeId){
+        return (long) reviewService.getReviewCount(storeId);
     }
 
 

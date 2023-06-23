@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonAutoDetect
 public class CreateReviewRequest {
     private String email;
-    private String storeName;
+    private Long StoreId;
     private String comment;
+    private String StoreName;
 }

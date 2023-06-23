@@ -8,12 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonAutoDetect
 public class ReviewDto {
-    private Long id;
     private String comment;
-    private String createDate;
-    private String modifiedDate;
     private String email;
-    private Long storeId;
 }

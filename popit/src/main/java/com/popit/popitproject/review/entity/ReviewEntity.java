@@ -34,11 +34,13 @@ public class ReviewEntity extends TimeEntity{
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_name", referencedColumnName = "store_name")
+    @JoinColumn(name = "store_id")
     private StoreEntity store;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email")
     private UserEntity email;
+
+    private String storeName;
 
 }
