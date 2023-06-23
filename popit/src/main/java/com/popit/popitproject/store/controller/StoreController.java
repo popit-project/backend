@@ -19,7 +19,7 @@ import static com.popit.popitproject.store.exception.Calculate.calculateDistance
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/store")
+@RequestMapping("/api/store")
 public class StoreController {
     private final StoreService storeService;
     private final StoreRepository storeRepository;
@@ -30,7 +30,6 @@ public class StoreController {
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 스토어가 없습니다.")));
 
         return ResponseEntity.ok(storeService.findMapStoreName(storeName));
-
     }
     @GetMapping("/searchAll")
     public ResponseEntity findMapAll(@RequestParam(required = false) String storeName){
