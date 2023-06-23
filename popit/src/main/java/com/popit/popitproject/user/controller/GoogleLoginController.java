@@ -10,10 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +67,8 @@ public class GoogleLoginController {
             userDTO = userService.registerGoogleUser(email);
         }
 
-        String token = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail());
-        return ResponseEntity.ok(token);
+        Map<String, Object> tokenData = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail());
+        userService.updateLastTokenUsed(userDTO.getEmail());
+        return ResponseEntity.ok(tokenData);
     }
 }

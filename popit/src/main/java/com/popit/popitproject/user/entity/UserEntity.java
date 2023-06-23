@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,9 @@ public class UserEntity {
 
     private String token;
 
+    @Column(nullable = false)
+    private String nickname;
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Role> roles = new ArrayList<>();
@@ -45,4 +49,7 @@ public class UserEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private SellerModeButton sellerModeButton = SellerModeButton.BUTTON_DISPLAY_OFF;
+
+    @Column
+    private Date lastTokenUsed;
 }

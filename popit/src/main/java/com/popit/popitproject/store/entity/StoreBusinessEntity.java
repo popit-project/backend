@@ -1,6 +1,5 @@
 package com.popit.popitproject.store.entity;
 
-import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.store.model.StoreBusinessEnteredDTO;
 import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.user.entity.UserEntity;

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Random;
 
 @Service
@@ -43,6 +44,7 @@ public class UserService {
         newUser.setPassword(userDto.getPassword());
         newUser.setEmail(userDto.getEmail());
         newUser.setPhone(userDto.getPhone());
+        newUser.setNickname(userDto.getNickname());
         newUser.getRoles().add(UserEntity.Role.ROLE_USER);
 
         Random random = new Random();
@@ -59,6 +61,7 @@ public class UserService {
         result.setPassword(newUser.getPassword());
         result.setEmail(newUser.getEmail());
         result.setPhone(newUser.getPhone());
+        result.setNickname(newUser.getNickname());
 
         return result;
     }
@@ -90,6 +93,7 @@ public class UserService {
         userDTO.setUserId(userEntity.getUserId());
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setPhone(userEntity.getPhone());
+        userDTO.setNickname(userEntity.getNickname());
 
         return userDTO;
     }
@@ -170,4 +174,13 @@ public class UserService {
 
         return result;
     }
+
+    public void updateLastTokenUsed(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null) {
+            userEntity.setLastTokenUsed(new Date());
+            userRepository.save(userEntity);
+        }
+    }
+
 }
