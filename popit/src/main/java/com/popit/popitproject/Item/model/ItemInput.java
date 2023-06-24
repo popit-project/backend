@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,12 +18,16 @@ public class ItemInput {
 
   private Integer price;
 
-  private String itemDetail;
+  private String itemImgURL;
+
+  private String fileUrl;
 
   private Integer stockNumber;
 
   private String itemSellStatus;
 
-  private String email;
+  private MultipartFile file;
+
+  private String userId;
 
 }

@@ -34,8 +34,10 @@ public class Item {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;       //상품 코드
 
-  @Column(name = "email")
-  private String email;
+//  @Column(name = "email")
+//  private String email;
+
+  private String userId; // 임시
 
   @Column(nullable = false, length = 50)
   private String itemNm; //상품명
@@ -47,23 +49,12 @@ public class Item {
   private int stockNumber; //재고수량
 
   @Lob
-  @Column(nullable = false)
-  private String itemDetail; //상품 상세 설명
+  private String itemImgURL; //상품 상세 설명
 
 //  @Enumerated(EnumType.STRING)
   private String itemSellStatus; //상품 판매 상태
 
   private LocalDateTime regTime;
   private LocalDateTime updateTime;
-
-
-
-  public void updateItem(ItemInput itemInput) {
-    this.itemNm = itemInput.getItemNm();
-    this.price = itemInput.getPrice();
-    this.stockNumber = itemInput.getStockNumber();
-    this.itemDetail = itemInput.getItemDetail();
-    this.itemSellStatus = itemInput.getItemSellStatus();
-  }
 
 }
