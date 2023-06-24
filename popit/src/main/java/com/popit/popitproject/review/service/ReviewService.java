@@ -6,8 +6,6 @@ import com.popit.popitproject.review.model.CreateReviewRequest;
 import com.popit.popitproject.review.model.ReviewDto;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
-import com.popit.popitproject.store.model.MapRequestDto;
-import com.popit.popitproject.store.repository.MapMapping;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
@@ -25,18 +23,41 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+//    @Transactional
+//    public void createComment(CreateReviewRequest createReviewRequest){
+//        String email = createReviewRequest.getEmail();
+//        String comment = createReviewRequest.getComment();
+//        Long StoreId = createReviewRequest.getStoreId();
+//        String storeName = createReviewRequest.getStoreName();
+//
+//        UserEntity user = userRepository.findByEmail(email);
+//        if(user == null){
+//            throw new ReviewException("No valid user information.");
+//        }
+//        Optional<StoreEntity> optionalStore = storeRepository.findById(StoreId);
+//        if (optionalStore.isPresent()) {
+//            StoreEntity store = optionalStore.get();
+//            ReviewEntity review = new ReviewEntity();
+//            review.setComment(comment);
+//            review.setEmail(user);
+//            review.setStore(store);
+//            review.setStoreName(store.getStoreName());
+//            reviewRepository.save(review);
+//        } else {
+//            throw new ReviewException("No valid store information.");
+//        }
+//    }
     @Transactional
-    public void createComment(CreateReviewRequest createReviewRequest){
+    public void createComment(Long storeId, CreateReviewRequest createReviewRequest){
+
         String email = createReviewRequest.getEmail();
         String comment = createReviewRequest.getComment();
-        Long StoreId = createReviewRequest.getStoreId();
-        String storeName = createReviewRequest.getStoreName();
 
         UserEntity user = userRepository.findByEmail(email);
         if(user == null){
             throw new ReviewException("No valid user information.");
         }
-        Optional<StoreEntity> optionalStore = storeRepository.findById(StoreId);
+        Optional<StoreEntity> optionalStore = storeRepository.findById(storeId);
         if (optionalStore.isPresent()) {
             StoreEntity store = optionalStore.get();
             ReviewEntity review = new ReviewEntity();
@@ -65,11 +86,13 @@ public class ReviewService {
     public int getReviewCount(Long storeId){
         List<ReviewEntity> review =reviewRepository.findByStoreId(storeId);
         int count = 0;
+
         for(int i = 0 ; i< review.size();i++){
-            count+=i;
+            count+=1;
         }
 
         return count;
     }
+
 
 }

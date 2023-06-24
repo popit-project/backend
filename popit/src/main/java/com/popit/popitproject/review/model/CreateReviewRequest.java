@@ -10,7 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateReviewRequest {
     private String email;
-    private Long StoreId;
     private String comment;
-    private String StoreName;
 }
