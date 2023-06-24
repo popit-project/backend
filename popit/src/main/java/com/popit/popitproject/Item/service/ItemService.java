@@ -6,6 +6,7 @@ import com.popit.popitproject.Item.model.ItemInput;
 import com.popit.popitproject.Item.repository.ItemRepository;
 import com.popit.popitproject.config.SecurityConfig;
 import com.popit.popitproject.user.entity.UserEntity;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import lombok.ToString;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @AllArgsConstructor
@@ -25,15 +27,19 @@ import org.springframework.stereotype.Service;
 public class ItemService {
 
   private final ItemRepository itemRepository;
+  private final S3Service s3Service;
 
-  public Item registerItem(ItemInput itemInput) {
+  public Item registerItem(ItemInput itemInput) throws IOException {
+
+    MultipartFile file = itemInput.getFile();
+    String imageUrl = s3Service.uploadFile(file);
+
     Item item = Item.builder()
         .itemNm(itemInput.getItemNm())
         .price(itemInput.getPrice())
-        .itemDetail(itemInput.getItemDetail())
         .stockNumber(itemInput.getStockNumber())
         .itemSellStatus(itemInput.getItemSellStatus())
-        .email(itemInput.getEmail())
+        .itemImgURL(imageUrl)
         .regTime(LocalDateTime.now())
         .updateTime(LocalDateTime.now())
         .build();
@@ -41,40 +47,59 @@ public class ItemService {
     return itemRepository.save(item);
   }
 
-  public Item getItem(Long id) {
-    return itemRepository.findById(id).orElseThrow(() -> new RuntimeException("Product Not Found"));
+  public List<Item> getItemsByUserId(String userId) {
+    return itemRepository.findByUserId(userId);
+  }
+
+  public Item updateItemImage(Long id, MultipartFile file) throws IOException {
+    Item item = itemRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
+
+    if (file != null) {
+      String fileUrl = s3Service.uploadFile(file);
+      item.setItemImgURL(fileUrl);
+      item.setUpdateTime(LocalDateTime.now());
+    }
+    return itemRepository.save(item);
   }
 
   public Item updateItem(Long id, ItemInput itemInput) {
-    Item item = itemRepository.findById(id).orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
+    Item item = itemRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
 
-    Optional.ofNullable(itemInput.getItemNm()).ifPresent(item::setItemNm);
-    Optional.ofNullable(itemInput.getPrice()).ifPresent(item::setPrice);
-    Optional.ofNullable(itemInput.getItemDetail()).ifPresent(item::setItemDetail);
-    Optional.ofNullable(itemInput.getItemSellStatus()).ifPresent(item::setItemSellStatus);
-    Optional.ofNullable(itemInput.getStockNumber()).ifPresent(item::setStockNumber);
+    if (itemInput.getItemNm() != null) {
+      item.setItemNm(itemInput.getItemNm());
+    }
+    if (itemInput.getPrice() != null) {
+      item.setPrice(itemInput.getPrice());
+    }
+    if (itemInput.getItemSellStatus() != null) {
+      item.setItemSellStatus(itemInput.getItemSellStatus());
+    }
+    if (itemInput.getStockNumber() != null) {
+      item.setStockNumber(itemInput.getStockNumber());
+    }
 
     item.setUpdateTime(LocalDateTime.now());
 
     return itemRepository.save(item);
-
   }
 
+  public class ItemNotFoundException extends RuntimeException {
+    public ItemNotFoundException(Long id) {
+      super("Item with id " + id + " does not exist.");
+    }
+  }
   public void deleteItem(Long id) {
-    itemRepository.deleteById(id);
+    Optional<Item> optionalItem = itemRepository.findById(id);
+    if (optionalItem.isPresent()) {
+      itemRepository.delete(optionalItem.get());
+    } else {
+      throw new ItemNotFoundException(id);
+    }
   }
 
-  public List<ItemDTO> getItemsByEmail(String email) {
-    List<Item> items = itemRepository.findByEmail(email);
-    return items.stream().map(this::convertToDto).collect(Collectors.toList());
-  }
 
-  private ItemDTO convertToDto(Item item) {
-    ItemDTO itemDTO = new ItemDTO();
-    itemDTO.setItemNm(item.getItemNm());
-    itemDTO.setPrice(item.getPrice());
-    itemDTO.setStockNumber(item.getStockNumber());
 
-    return itemDTO;
-  }
+
 }
