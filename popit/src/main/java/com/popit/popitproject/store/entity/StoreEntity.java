@@ -1,7 +1,6 @@
 package com.popit.popitproject.store.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.store.repository.MapMapping;
 import lombok.*;
@@ -11,7 +10,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 
 @Getter
@@ -37,13 +35,6 @@ public class StoreEntity implements Serializable{
     @Column
     @Enumerated(EnumType.STRING)
     private StoreType storeType; // 사업 종류
-
-    @Column
-    private String businessLicenseAddress; // 사업자 등록증 내 주소
-
-    @Column
-    private String businessLicenseNumber; // 사업자 등록번호
-
     @Column
     private Timestamp enteredAt; // 입점 날짜
 
@@ -79,9 +70,6 @@ public class StoreEntity implements Serializable{
     @Column(name = "y")
     private Double y;
 
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewEntity> comments;
 
     public static StoreEntity from (MapMapping mapMapping) {
         return StoreEntity.builder()

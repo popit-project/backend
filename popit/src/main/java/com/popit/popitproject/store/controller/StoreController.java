@@ -32,12 +32,8 @@ public class StoreController {
         return ResponseEntity.ok(storeService.findMapStoreName(storeName));
     }
     @GetMapping("/searchAll")
-    public ResponseEntity findMapAll(@RequestParam(required = false) String storeName){
-
-        if(storeName == null){
-            return ResponseEntity.ok(storeService.findMapAll());
-        }
-        return ResponseEntity.ok(storeService.findMapStoreName(storeName));
+    public ResponseEntity findMapAll(){
+        return ResponseEntity.ok(storeService.findMapAll());
     }
 
     @GetMapping("/searchType/{storeType}")
