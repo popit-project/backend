@@ -71,11 +71,5 @@ public class StoreEntity implements Serializable{
     private Double y;
 
 
-    public static StoreEntity from (MapMapping mapMapping) {
-        return StoreEntity.builder()
-                .id(mapMapping.getId())
-                .storeName(mapMapping.getStoreName())
-                .build();
-    }
 }
 

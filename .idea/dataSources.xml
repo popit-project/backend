@@ -6,6 +6,12 @@
       <synchronize>true</synchronize>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mariadb://popitdb.cljjw1huggky.ap-northeast-2.rds.amazonaws.com:3306</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="popit" uuid="c751c46e-97fd-45fe-bd9c-f1c5765627bc">
+      <driver-ref>mariadb</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mariadb://popitdb.cljjw1huggky.ap-northeast-2.rds.amazonaws.com:3306/popit_set_DB</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

@@ -15,7 +15,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.popit.popitproject.user.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.popit.popitproject"))
                 .paths(PathSelectors.any())
                 .build();
     }
