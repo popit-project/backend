@@ -6,6 +6,7 @@ import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.store.repository.MapMapping;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.store.service.StoreService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class StoreController {
     private final StoreService storeService;
     private final StoreRepository storeRepository;
 
+    @ApiOperation(
+            value = "스토어 검색"
+            , notes = "스토어 이름을 통해 일치한 스토어를 검색합니다.")
     @GetMapping("/search/{storeName}")
     public ResponseEntity<MapMapping> findMap(@PathVariable String storeName){
         Optional.ofNullable(Optional.ofNullable(storeRepository.findByStoreName(storeName))
@@ -31,11 +35,17 @@ public class StoreController {
 
         return ResponseEntity.ok(storeService.findMapStoreName(storeName));
     }
+    @ApiOperation(
+            value = "스토어 정보 모두 찾기"
+            , notes = "스토어에 대한 모든 정보가 추출됩니다.")
     @GetMapping("/searchAll")
     public ResponseEntity findMapAll(){
         return ResponseEntity.ok(storeService.findMapAll());
     }
 
+    @ApiOperation(
+            value = "스토어 타입별로 추출"
+            , notes = "스토어 타입을 넣어 타입 별로 추출됩니다.")
     @GetMapping("/searchType/{storeType}")
     public List<MapMapping> findMapType(@PathVariable StoreType storeType,
                                         @RequestParam("userLat") Double userLat,
@@ -52,6 +62,9 @@ public class StoreController {
         return ResponseEntity.ok(storesWithinRadius).getBody();
     }
 
+    @ApiOperation(
+            value = "스토어 주소 수정"
+            , notes = "스토어 ID를 입력해서 그안에 있는 주소를 수정하고 위도경도를 추출합니다..")
     @PutMapping("/update/{storeId}/address")
     public ResponseEntity<String> updateStore(@PathVariable Long storeId,@RequestBody StoreEntity storeAddress) throws IOException {
         StoreEntity store = storeRepository.findById(storeId)
@@ -66,6 +79,9 @@ public class StoreController {
         return ResponseEntity.ok("Address update.");
     }
 
+    @ApiOperation(
+            value = "사용자 주변5km 스토어 조회"
+            , notes = "사용자의 위치정보를 가지고와 주변 5KM 내에 있는 스토어를 조회합니다.")
     @GetMapping("/searchAll/5km")
     public List<MapMapping> find5km(@RequestParam("userLat") Double userLat, @RequestParam("userLon") Double userLon){
         return storeService.findStoreWithin5km(userLat,userLon);
