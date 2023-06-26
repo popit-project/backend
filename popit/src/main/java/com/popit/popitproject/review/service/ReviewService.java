@@ -4,12 +4,14 @@ import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.review.exception.ReviewException;
 import com.popit.popitproject.review.model.CreateReviewRequest;
 import com.popit.popitproject.review.model.ReviewDto;
+import com.popit.popitproject.review.model.UpdateReviewRequest;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -70,6 +72,40 @@ public class ReviewService {
 
         return count;
     }
+
+    @Transactional
+    public void deleteReview(Long id, String email){
+        Optional<ReviewEntity> optionalReview = reviewRepository.findById(id);
+        if (optionalReview.isPresent()) {
+            ReviewEntity review = optionalReview.get();
+
+            if (!review.getEmail().getEmail().equals(email)) {
+                throw new ReviewException("You do not have permission to delete this review.");
+            }
+
+            reviewRepository.delete(review);
+        } else {
+            throw new ReviewException("No valid review information.");
+        }
+    }
+    @Transactional
+    public void updateReview(Long id, UpdateReviewRequest updateReviewRequest) {
+        Optional<ReviewEntity> optionalReview = reviewRepository.findById(id);
+        if (optionalReview.isPresent()) {
+            ReviewEntity review = optionalReview.get();
+
+            if (!review.getEmail().getEmail().equals(updateReviewRequest.getEmail())) {
+                throw new ReviewException("You do not have permission to update this review.");
+            }
+
+            review.setComment(updateReviewRequest.getComment());
+
+            reviewRepository.save(review);
+        } else {
+            throw new ReviewException("No valid review information.");
+        }
+    }
+
 
 
 }
