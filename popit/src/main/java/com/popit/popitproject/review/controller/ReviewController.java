@@ -23,7 +23,6 @@ public class ReviewController {
     @PostMapping("/write/{storeId}")
     public ResponseEntity<String> createComment(@PathVariable("storeId") Long storeId, @RequestBody CreateReviewRequest createReviewRequest) {
         reviewService.createComment(storeId,createReviewRequest);
-
         return ResponseEntity.ok("review write success!");
     }
 
