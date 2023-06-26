@@ -3,7 +3,6 @@ package com.popit.popitproject.store.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.store.model.StoreType;
-import com.popit.popitproject.store.repository.MapMapping;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,10 +25,6 @@ public class StoreEntity implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 매장 주인(사업자)
-    @OneToOne
-    @JoinColumn(name = "seller_id")
-    private StoreBusinessEntity seller;
 
     @Column(name = "store_name")
     private String storeName;
@@ -74,10 +69,4 @@ public class StoreEntity implements Serializable{
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReviewEntity> comments;
 
-    public static StoreEntity from (MapMapping mapMapping) {
-        return StoreEntity.builder()
-                .id(mapMapping.getId())
-                .storeName(mapMapping.getStoreName())
-                .build();
-    }
 }

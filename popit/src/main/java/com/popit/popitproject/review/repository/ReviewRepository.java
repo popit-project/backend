@@ -11,8 +11,5 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity,Long> {
-//    @Query("SELECT r.comment, u.email FROM ReviewEntity r JOIN r.store s JOIN r.email u WHERE s.storeName = :storeName")
-//    List<Object[]> findCommentsAndUserIdsByStoreName(@Param("storeName") Long StoreId);
-
     List<ReviewEntity> findByStoreId(Long StoreId);
 }

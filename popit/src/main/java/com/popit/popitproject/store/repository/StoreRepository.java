@@ -13,5 +13,4 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     MapMapping findByStoreName(String storeName);
     List<MapMapping> findAllBy();
     List<MapMapping> findByStoreType(StoreType storeType);
-    Optional<StoreEntity> findBySeller(StoreBusinessRepository seller);
 }
