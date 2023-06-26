@@ -1,13 +1,16 @@
 package com.popit.popitproject.user.entity;
 
+import com.popit.popitproject.store.entity.StoreEntity;
+import com.popit.popitproject.store.model.SellerModeButton;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "users_new")
+@Table(name = "users")
 @Getter
 @Setter
 public class UserEntity {
@@ -27,6 +30,9 @@ public class UserEntity {
 
     private String token;
 
+    @Column(nullable = false)
+    private String nickname;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Role> roles = new ArrayList<>();
@@ -35,4 +41,15 @@ public class UserEntity {
         ROLE_USER,
         ROLE_SELLER
     }
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "seller_id")
+    private StoreEntity sellerId;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private SellerModeButton sellerModeButton = SellerModeButton.BUTTON_DISPLAY_OFF;
+
+    @Column
+    private Date lastTokenUsed;
 }
