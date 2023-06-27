@@ -1,5 +1,6 @@
 package com.popit.popitproject.user.entity;
 
+import com.popit.popitproject.store.entity.LikeEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.model.SellerModeButton;
 import lombok.Getter;
@@ -52,4 +53,9 @@ public class UserEntity {
 
     @Column
     private Date lastTokenUsed;
+
+    // 좋아요 기능을 위해 추가
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LikeEntity> likes = new ArrayList<>();
+
 }

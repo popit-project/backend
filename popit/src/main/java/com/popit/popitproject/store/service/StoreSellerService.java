@@ -24,26 +24,22 @@ public class StoreSellerService {
     private final StoreSellerRepository sellerRepository;
     private final UserRepository userRepository;
 
-
     public StoreEntity saveSellerInfo(UserEntity user, StoreEntity store) {
         return sellerRepository.save(StoreEntity.builder()
-            .id(store.getId())
-            .storeName(store.getStoreName())
-            .storeImage(store.getStoreImage())
-            .storeType(store.getStoreType())
-            .storeAddress(store.getStoreAddress())
-            .openTime(store.getOpenTime())
-            .closeTime(store.getCloseTime())
-            .openDate(store.getOpenDate())
-            .closeDate(store.getCloseDate())
-            .user(user)
-            .build()
+                .id(store.getId())
+                .storeName(store.getStoreName())
+                .storeImage(store.getStoreImage())
+                .storeType(store.getStoreType())
+                .storeAddress(store.getStoreAddress())
+                .openTime(store.getOpenTime())
+                .closeTime(store.getCloseTime())
+                .openDate(store.getOpenDate())
+                .closeDate(store.getCloseDate())
+                .user(user)
+                .x(store.getX())
+                .y(store.getY())
+                .build()
         );
-    }
-
-    public StoreEntity retrieve(final Long email) {
-        return sellerRepository.findById(email)
-            .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
     }
 
     public void generateSellerRole(UserEntity user, StoreEntity store) {

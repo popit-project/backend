@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -70,8 +71,12 @@ public class StoreEntity implements Serializable{
     private Double y;
 
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ReviewEntity> comments;
+
+    @OneToMany(mappedBy = "store")
     private List<ReviewEntity> comments;
+
 
     public static StoreEntity from (MapMapping mapMapping) {
         return StoreEntity.builder()
@@ -79,4 +84,8 @@ public class StoreEntity implements Serializable{
             .storeName(mapMapping.getStoreName())
             .build();
     }
+
+    // 좋아요 기능을 위해 추가
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<LikeEntity> likes = new ArrayList<>();
 }

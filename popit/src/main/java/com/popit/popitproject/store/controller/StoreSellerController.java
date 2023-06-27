@@ -34,13 +34,15 @@ public class StoreSellerController {
     private final StoreSellerService sellerService;
     private final StoreSellerRepository storeRepository;
 
-    @PostMapping("/user/sellerEnter")
+    @PostMapping("/sellerEnter")
     public ResponseEntity<?> sellerEntered(@AuthenticationPrincipal String userId,
-        @RequestBody StoreSellerDTO sellerDTO) throws IOException {
+                                           @RequestBody StoreSellerDTO sellerDTO) throws IOException {
 
         // 토큰에서 가지고 온 유저
-        UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        UserEntity user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+        }
 
         // 이미 해당 유저가 판매자로 등록된 경우 예외 처리
         if (user.getStore() != null) {
@@ -49,26 +51,25 @@ public class StoreSellerController {
 
         // 서비스를 이용해서 Seller 생성
         StoreEntity createdSeller = sellerService.saveSellerInfo(user,
-            StoreSellerDTO.toEntity(sellerDTO));
+                StoreSellerDTO.toEntity(sellerDTO));
         sellerService.generateSellerRole(user, createdSeller);
 
         String newAddress = createdSeller.getStoreAddress();
         StoreEntity change = KakaoAddressChange.addressChange(newAddress);
 
         SellerResponse sellerResponse = SellerResponse.builder()
-            .id(createdSeller.getId())
-            .storeName(createdSeller.getStoreName())
-            .storeImage(createdSeller.getStoreImage())
-            .storeType(String.valueOf(createdSeller.getStoreType()))
-            .storeAddress(createdSeller.getStoreAddress())
-            .openTime(createdSeller.getOpenTime())
-            .closeTime(createdSeller.getCloseTime())
-            .openDate(createdSeller.getOpenDate())
-            .closeDate(createdSeller.getCloseDate())
-            .x(change.getX())
-            .y(change.getY())
-            .build();
-
+                .id(createdSeller.getId())
+                .storeName(createdSeller.getStoreName())
+                .storeImage(createdSeller.getStoreImage())
+                .storeType(String.valueOf(createdSeller.getStoreType()))
+                .storeAddress(createdSeller.getStoreAddress())
+                .openTime(createdSeller.getOpenTime())
+                .closeTime(createdSeller.getCloseTime())
+                .openDate(createdSeller.getOpenDate())
+                .closeDate(createdSeller.getCloseDate())
+                .x(change.getX())
+                .y(change.getY())
+                .build();
 
         return ResponseEntity.ok().body(sellerResponse);
     }
@@ -80,14 +81,13 @@ public class StoreSellerController {
 
 
         // 토큰에서 가져온 사용자 정보
-        UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        UserEntity user = userRepository.findByUserId(userId);
 
         StoreEntity storeInfo = storeRepository.findByUser(user)
             .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
 
         String newAddress = updatedStore.getStoreAddress();
-        StoreEntity change =KakaoAddressChange.addressChange(newAddress);
+        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
 
         // 수정된 정보로 업데이트
         storeInfo.setStoreAddress(updatedStore.getStoreAddress());

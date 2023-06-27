@@ -60,8 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String userId = String.valueOf(jwtTokenService.getSellerIdFromToken(token));
 
                 // TODO : 변경 부분 기존 코드에서 사용자 권한에서 유저아이디를 가져와서 store 있다면 role_seller를 부여
-                UserEntity user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                UserEntity user = userRepository.findByUserId(userId);
+                    //.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 if (user.getStore() != null) {
