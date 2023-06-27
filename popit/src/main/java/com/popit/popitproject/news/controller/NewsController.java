@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sellerMode")
+@RequestMapping("/api/seller")
 public class NewsController {
 
     private final NewsService newsService;
