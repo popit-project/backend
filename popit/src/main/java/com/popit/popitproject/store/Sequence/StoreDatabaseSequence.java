@@ -1,4 +1,4 @@
-//package com.popit.popitproject.store.Sequence;
+package com.popit.popitproject.store.Sequence;//package com.popit.popitproject.store.Sequence;
 //
 //import lombok.Data;
 //import org.springframework.data.annotation.Id;

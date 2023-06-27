@@ -18,7 +18,7 @@ public class KakaoAddressChange {
     private static String GEOCODE_URL="https://dapi.kakao.com/v2/local/search/address.json?query=";
 
     @Value("${kakao.restapi.key}")
-    private static String GEOCODE_USER_INFO="KakaoAK cecd764535a3df2e33f0e29c79e78ba8";
+    private static String GEOCODE_USER_INFO;
 
 
     public static StoreEntity addressChange(String storeAddress) throws IOException {

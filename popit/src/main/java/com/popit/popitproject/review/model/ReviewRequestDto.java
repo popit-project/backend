@@ -1,6 +1,5 @@
 package com.popit.popitproject.review.model;
 
-import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.user.entity.UserEntity;
 import lombok.AllArgsConstructor;

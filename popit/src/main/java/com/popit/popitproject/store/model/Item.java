@@ -1,4 +1,4 @@
-//package com.popit.popitproject.store.model;
+package com.popit.popitproject.store.model;//package com.popit.popitproject.store.model;
 //
 //import java.time.LocalDateTime;
 //import javax.persistence.Id;
