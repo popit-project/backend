@@ -2,7 +2,6 @@ package com.popit.popitproject.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.popit.popitproject.user.model.UserDTO;
-import com.popit.popitproject.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
