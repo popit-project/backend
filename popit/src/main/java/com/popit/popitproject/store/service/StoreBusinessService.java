@@ -3,16 +3,16 @@ package com.popit.popitproject.store.service;
 
 import static com.popit.popitproject.store.model.SellerModeButton.BUTTON_CLICK_TO_USER_MODE;
 
+import com.popit.popitproject.user.entity.UserEntity.Role;
 import com.popit.popitproject.store.model.SellerModeButton;
 import com.popit.popitproject.store.entity.StoreBusinessEntity;
-import com.popit.popitproject.news.entity.NewsEntity;
+//import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
-import com.popit.popitproject.news.dto.NewsDto;
+//import com.popit.popitproject.news.dto.NewsDto;
 import com.popit.popitproject.store.model.StoreBusinessEnteredDTO;
-import com.popit.popitproject.news.repository.NewsRepository;
+//import com.popit.popitproject.news.repository.NewsRepository;
 import com.popit.popitproject.store.repository.StoreBusinessRepository;
 import com.popit.popitproject.store.repository.StoreRepository;
-import com.popit.popitproject.user.entity.Role;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
 import com.popit.popitproject.user.service.JwtTokenService;
@@ -27,7 +27,7 @@ public class StoreBusinessService {
     private final UserRepository userRepository;
     private final StoreBusinessRepository storeBusinessRepository;
     private final JwtTokenService jwtTokenService;
-    private final NewsRepository newsRepository;
+//    private final NewsRepository newsRepository;
     private final StoreRepository storeRepository;
 
     // 입점신청
@@ -37,7 +37,7 @@ public class StoreBusinessService {
 
         // 유저 엔티티의 role 설정
         List<Role> roles = new java.util.ArrayList<>();
-        roles.add(Role.SELLER);
+        roles.add(Role.ROLE_SELLER);
         user.setRoles(roles);
         // 유저에 저장하기
         user.setSeller(storeBusiness);
@@ -76,7 +76,7 @@ public class StoreBusinessService {
     public void switchToUserMode(UserEntity user) {
         // 판매자 토큰 생성
         String userToken = jwtTokenService
-            .generateUserToken(user.getEmail());
+                .generateUserToken(user.getUserId(), user.getEmail()).toString(); // 변경
 
         // 유저 모드로 전환
         user.setSellerModeButton(BUTTON_CLICK_TO_USER_MODE);
@@ -87,11 +87,9 @@ public class StoreBusinessService {
 
     }
 
-
     // 현재 유저 : 이메일로 가져오기
     public UserEntity getCurrentUser(String userEmail) {
-        return userRepository.findByEmail(userEmail)
-            .orElseThrow(() -> new IllegalArgumentException("인증된 셀러를 찾을 수 없습니다."));
+        return userRepository.findByEmail(userEmail);
     }
 
     // 로그인 된 셀러 가져오기
@@ -99,6 +97,4 @@ public class StoreBusinessService {
         UserEntity loggedInUser = getCurrentUser(userEmail); // 로그인된 사용자 정보 가져오기
         return loggedInUser.getSeller(); // 로그인된 사용자의 StoreBusinessEntity 가져오기
     }
-
-
 }

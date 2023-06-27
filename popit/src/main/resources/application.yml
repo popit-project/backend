@@ -29,5 +29,5 @@ spring:
             enable: true
 google:
   client:
-    id: 930660652939-9vqf77ff7pq0ibkskt6hgbqlfgu4rh1t.apps.googleusercontent.com
-    pw: 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
+    id: ${GOOGLE_ID}
+    pw: ${GOOGLE_PW}

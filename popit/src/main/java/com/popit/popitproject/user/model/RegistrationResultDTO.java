@@ -12,6 +12,7 @@ public class RegistrationResultDTO {
     private String email;
     private String phone;
     private String message;
+    private String nickname;
 
     public RegistrationResultDTO(UserDTO userDto, String message) {
         this.userId = userDto.getUserId();
@@ -20,5 +21,6 @@ public class RegistrationResultDTO {
         this.email = userDto.getEmail();
         this.phone = userDto.getPhone();
         this.message = message;
+        this.nickname = userDto.getNickname();
     }
 }

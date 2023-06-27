@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
-  List<Item> findByEmail(String email);
+  List<Item> findByUserId(String userId);
 
 }
 

@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/user")
@@ -52,8 +54,9 @@ public class UserController {
         boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
         if (isLoggedIn) {
             UserDTO user = userService.getUserInfo(loginRequest.getUserId());
-            String token = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
-            return ResponseEntity.ok("토큰: " + token);
+            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
+            userService.updateLastTokenUsed(user.getEmail());
+            return ResponseEntity.ok(tokenData);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.");
         }
@@ -106,5 +109,32 @@ public class UserController {
             return ResponseEntity.ok("로그아웃 성공");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
+    }
+
+    @GetMapping("/tokenInfo")
+    public ResponseEntity<?> getTokenInfo(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        if (jwtTokenService.validateToken(token)) {
+            String userId = jwtTokenService.getUserIdFromToken(token);
+            String email = jwtTokenService.getEmailFromToken(token);
+            Map<String, String> tokenData = new HashMap<>();
+            tokenData.put("userId", userId);
+            tokenData.put("email", email);
+            return ResponseEntity.ok(tokenData);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+        }
+    }
+
+    @PostMapping("/changeUserInfo")
+    public String changeNickname(@RequestBody ChangeUserInfoRequest changeNicknameRequest) {
+        boolean isChanged = userService.changeUserInfo(
+                changeNicknameRequest.getEmail(),
+                changeNicknameRequest.getNewNickname());
+        if (isChanged) {
+            return "닉네임이 성공적으로 변경되었습니다.";
+        } else {
+            return "닉네임 변경에 실패했습니다. 이메일을 확인해주세요.";
+        }
     }
 }
