@@ -32,13 +32,13 @@ public class NewsController {
             UserEntity user = newsService.getUserById(userId);
             NewsEntity entity = newsService.convertToEntity(dto);
 
-            StoreEntity store = sellerRepository.findById(user.getSellerId().getSellerId())
+            StoreEntity store = sellerRepository.findById(user.getStore().getId())
                 .orElseThrow();
 
             entity.setStoreName(store.getStoreName());
-            entity.setCity(store.getStoreAddress());
+            entity.setCity(store.getStoreAddress()); // 동만 나오게
             entity.setCreateTime(LocalDateTime.now());
-            entity.setSeller(user.getSellerId());
+            entity.setSeller(user.getStore());
 
             List<NewsEntity> entities = newsService.create(entity);
             List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class NewsController {
 
         try {
             StoreEntity store = newsService.getStoreByName(storeName);
-            List<NewsEntity> entities = newsService.retrieve(store.getSellerId());
+            List<NewsEntity> entities = newsService.retrieve(store.getId());
 
             List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
 

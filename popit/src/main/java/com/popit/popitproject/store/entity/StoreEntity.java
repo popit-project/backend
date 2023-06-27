@@ -26,7 +26,7 @@ public class StoreEntity implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sellerId;
+    private Long id;
 
     @Column(name="store_name")
     private String storeName;
@@ -56,7 +56,7 @@ public class StoreEntity implements Serializable{
     private String storePhone;
 
     @OneToOne
-    @JoinColumn(name = "userid", unique = true)
+    @JoinColumn(name = "seller", unique = true)
     private UserEntity user;
 
     @OneToMany(mappedBy = "seller")
@@ -75,7 +75,7 @@ public class StoreEntity implements Serializable{
 
     public static StoreEntity from (MapMapping mapMapping) {
         return StoreEntity.builder()
-            .sellerId(mapMapping.getId())
+            .id(mapMapping.getId())
             .storeName(mapMapping.getStoreName())
             .build();
     }

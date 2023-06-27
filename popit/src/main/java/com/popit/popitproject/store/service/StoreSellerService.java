@@ -27,7 +27,7 @@ public class StoreSellerService {
 
     public StoreEntity saveSellerInfo(UserEntity user, StoreEntity store) {
         return sellerRepository.save(StoreEntity.builder()
-            .sellerId(store.getSellerId())
+            .id(store.getId())
             .storeName(store.getStoreName())
             .storeImage(store.getStoreImage())
             .storeType(store.getStoreType())
@@ -49,7 +49,7 @@ public class StoreSellerService {
     public void generateSellerRole(UserEntity user, StoreEntity store) {
         user.getRoles().add(Role.ROLE_SELLER);
         user.setSellerModeButton(SellerModeButton.BUTTON_DISPLAY_ON);
-        user.setSellerId(store);
+        user.setStore(store);
         userRepository.save(user);
     }
 

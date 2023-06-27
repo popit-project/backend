@@ -1,6 +1,7 @@
 package com.popit.popitproject.store.controller;
 
 import com.popit.popitproject.store.entity.StoreEntity;
+import com.popit.popitproject.store.exception.KakaoAddressChange;
 import com.popit.popitproject.store.model.SellerResponse;
 import com.popit.popitproject.store.model.StoreSellerDTO;
 import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
@@ -9,6 +10,7 @@ import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.store.service.StoreSellerService;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
+import java.io.IOException;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +36,14 @@ public class StoreSellerController {
 
     @PostMapping("/sellerEnter")
     public ResponseEntity<?> sellerEntered(@AuthenticationPrincipal String userId,
-        @RequestBody StoreSellerDTO sellerDTO) {
+        @RequestBody StoreSellerDTO sellerDTO) throws IOException {
 
         // 토큰에서 가지고 온 유저
         UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 이미 해당 유저가 판매자로 등록된 경우 예외 처리
-        if (user.getSellerId() != null) {
+        if (user.getStore() != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 스토어가 등록된 상태입니다.");
         }
 
@@ -50,8 +52,11 @@ public class StoreSellerController {
             StoreSellerDTO.toEntity(sellerDTO));
         sellerService.generateSellerRole(user, createdSeller);
 
+        String newAddress = createdSeller.getStoreAddress();
+        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+
         SellerResponse sellerResponse = SellerResponse.builder()
-            .sellerid(createdSeller.getSellerId())
+            .id(createdSeller.getId())
             .storeName(createdSeller.getStoreName())
             .storeImage(createdSeller.getStoreImage())
             .storeType(String.valueOf(createdSeller.getStoreType()))
@@ -60,7 +65,10 @@ public class StoreSellerController {
             .closeTime(createdSeller.getCloseTime())
             .openDate(createdSeller.getOpenDate())
             .closeDate(createdSeller.getCloseDate())
+            .x(change.getX())
+            .y(change.getY())
             .build();
+
 
         return ResponseEntity.ok().body(sellerResponse);
     }
@@ -68,7 +76,7 @@ public class StoreSellerController {
     // TODO: 입점했던 정보를 수정하기
     @PutMapping("/sellerEnter")
     public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
-        @RequestBody UpdateStoreSellerDTO updatedStore) {
+        @RequestBody UpdateStoreSellerDTO updatedStore) throws IOException {
 
 
         // 토큰에서 가져온 사용자 정보
@@ -78,6 +86,9 @@ public class StoreSellerController {
         StoreEntity storeInfo = storeRepository.findByUser(user)
             .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
 
+        String newAddress = updatedStore.getStoreAddress();
+        StoreEntity change =KakaoAddressChange.addressChange(newAddress);
+
         // 수정된 정보로 업데이트
         storeInfo.setStoreAddress(updatedStore.getStoreAddress());
         storeInfo.setOpenTime(updatedStore.getOpenTime());
@@ -85,10 +96,13 @@ public class StoreSellerController {
         storeInfo.setOpenDate(updatedStore.getOpenDate());
         storeInfo.setCloseDate(updatedStore.getCloseDate());
 
+        storeInfo.setX(change.getX());
+        storeInfo.setY(change.getY());
+
         StoreEntity updatedStoreInfo = storeRepository.save(storeInfo);
 
         SellerResponse sellerResponse = SellerResponse.builder()
-            .sellerid(updatedStoreInfo.getSellerId())
+            .id(updatedStoreInfo.getId())
             .storeName(updatedStoreInfo.getStoreName())
             .storeImage(updatedStoreInfo.getStoreImage())
             .storeType(String.valueOf(updatedStoreInfo.getStoreType()))
@@ -97,6 +111,7 @@ public class StoreSellerController {
             .closeTime(updatedStoreInfo.getCloseTime())
             .openDate(updatedStoreInfo.getOpenDate())
             .closeDate(updatedStoreInfo.getCloseDate())
+
             .build();
 
         return ResponseEntity.ok().body(sellerResponse);

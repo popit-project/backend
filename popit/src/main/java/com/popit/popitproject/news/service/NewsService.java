@@ -52,16 +52,16 @@ public class NewsService {
             throw new RuntimeException("Entity cannot be null.");
         }
 
-        if (entity.getSeller().getSellerId() == null) {
+        if (entity.getSeller().getId() == null) {
             log.warn("Unknown user.");
             throw new RuntimeException("Unknown user.");
         }
     }
 
     // 검색
-    public List<NewsEntity> retrieve(final Long sellerid) {
+    public List<NewsEntity> retrieve(final Long id) {
 
-        StoreEntity seller = sellerRepository.findById(sellerid).orElseThrow();
+        StoreEntity seller = sellerRepository.findById(id).orElseThrow();
 
         return newsRepository.findBySeller(seller).orElseThrow(
             ()-> new RuntimeException("사용자 정보 x")
@@ -94,7 +94,7 @@ public class NewsService {
         }
 
         // 새 News 리스트를 리턴 해줌
-        return retrieve(entity.getSeller().getSellerId());
+        return retrieve(entity.getSeller().getId());
     }
 
 
@@ -124,10 +124,21 @@ public class NewsService {
             .build();
     }
 
+    // 주소 문자열을 파싱하여 Address 객체로 변환하는 메서드
+    public String parseAddress(String fullAddress) {
+        // 주소 문자열을 파싱하여 필요한 정보 추출
+        // 예시로는 각 요소를 공백이나 쉼표 등으로 구분하여 추출하는 방식을 사용하였습니다.
+        String[] addressParts = fullAddress.split("[,\\s]+");
+        String city = addressParts[2];;
+        return city;
+    }
+
     public ResponseEntity<ResponseDTO<NewsDTO>> createErrorResponse(String errorMessage) {
         ResponseDTO<NewsDTO> response = new ResponseDTO<>();
         response.setError(errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+
 
 }
