@@ -57,5 +57,4 @@ public class UserEntity {
     // 좋아요 기능을 위해 추가
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<LikeEntity> likes = new ArrayList<>();
-
 }
