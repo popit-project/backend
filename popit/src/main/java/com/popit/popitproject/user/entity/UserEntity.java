@@ -1,6 +1,6 @@
 package com.popit.popitproject.user.entity;
 
-import com.popit.popitproject.store.entity.StoreBusinessEntity;
+import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.model.SellerModeButton;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String nickname;
-    
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private List<Role> roles = new ArrayList<>();
@@ -44,7 +44,7 @@ public class UserEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "seller_id")
-    private StoreBusinessEntity seller;
+    private StoreEntity store;
 
     @Column
     @Enumerated(EnumType.STRING)

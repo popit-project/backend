@@ -1,9 +1,12 @@
 package com.popit.popitproject.config;
 
+import com.popit.popitproject.user.entity.UserEntity;
+import com.popit.popitproject.user.repository.UserRepository;
 import com.popit.popitproject.user.service.JwtTokenService;
 import com.popit.popitproject.user.service.TokenBlacklistService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,8 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException {
         String token = parseBearerToken(request);
 
         if (token != null) {
@@ -51,17 +58,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 String userId = String.valueOf(jwtTokenService.getSellerIdFromToken(token));
+
+                // TODO : 변경 부분 기존 코드에서 사용자 권한에서 유저아이디를 가져와서 store 있다면 role_seller를 부여
+                UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
                 List<GrantedAuthority> authorities = new ArrayList<>();
-                if (userId.equals("seller")) {
+                if (user.getStore() != null) {
                     authorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
                 }
-
                 authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userId, null, authorities
+                AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userId, null, authorities
                 );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                authentication.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authentication);
                 SecurityContextHolder.setContext(securityContext);
@@ -77,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String parseBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
