@@ -1,19 +1,20 @@
 ### 회원가입 API
 POST http://localhost:8082/api/user/register
-// POST http://3.34.149.107:8081/user/register
+// POST http://3.34.149.107:8082/api/user/register
 Content-Type: application/json
 
 {
-  "userId": "testID1",
-  "password": "testPW1",
-  "nickname": "testnickname1",
-  "email" : "pon5100@naver.com",
-  "phone": "010-1111-1111"
+  "userId": "test9",
+  "password": "test9",
+  "passwordCheck": "test9",
+  "email" : "test9@naver.com",
+  "phone": "010-9999-9999",
+  "nickname": "test9"
 }
 
 ### 이메일 검증 API
-GET http://localhost:8082/api/user/validate-email?userId=testID1&code=168916
-// GET http://3.34.149.107:8082/api/user/validate-email?userId=testID3&code=168916
+GET http://localhost:8082/api/user/validate-email?userId=test9&code=321672
+// GET http://3.34.149.107:8082/api/user/validate-email?userId=test1&code=404769
 Content-Type: application/json
 
 ### 로그인 API
@@ -22,13 +23,18 @@ POST http://localhost:8082/api/user/login
 Content-Type: application/json
 
 {
-"userId": "testID1",
-"password": "testPW1"
+  "userId": "test9",
+  "password": "test9"
 }
 
+### 로그아웃 API
+POST http://localhost:8082/api/user/logout
+// POST http://3.34.149.107:8082/api/user/logout
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzIzNDIzc3dlIiwiZW1haWwiOiIxNTEyMzMzczEzc3NzYXNkQG5hdmVyLmNvbSIsImlhdCI6MTY4Nzg1NzY5MywiZXhwIjoxNjg3ODU5NDkzfQ.-v2GujKQ2Ow-e-v8JORGjM9UxyVuAge7GflzfDWROkHoOv8cKK6cW9U-BzVweMSE4zhj7U7x-Y3F_H_de-TQFg
+
 ### 사용자 정보 조회 API
-// GET http://localhost:8082/api/user/info?userId=testID1
-GET http://3.34.149.107:8082/api/user/info?userId=testID1
+GET http://localhost:8082/api/user/info?email=555@naver.com
+// GET http://3.34.149.107:8082/api/user/info?email=555@naver.com
 Content-Type: application/json
 
 ### 아이디 찾기 API
@@ -37,9 +43,8 @@ POST http://localhost:8082/api/user/find-id
 Content-Type: application/json
 
 {
-  "email": "pon5100@naver.com"
+  "email": "333@naver.com"
 }
-
 
 ### 비밀번호 재설정 API
 // POST http://3.34.149.107:8082/api/user/reset-password
@@ -47,9 +52,8 @@ POST http://localhost:8082/api/user/reset-password
 Content-Type: application/json
 
 {
-  "email": "pon5100@naver.com"
+  "email": "333@naver.com"
 }
-
 
 ### 비밀번호 변경 API
 POST http://localhost:8082/api/user/change-password
@@ -57,7 +61,60 @@ POST http://localhost:8082/api/user/change-password
 Content-Type: application/json
 
 {
-  "userId": "testID1",
-  "oldPassword": "testPW1",
-  "newPassword": "newTestPW1"
+  "userId": "333",
+  "oldPassword": "fFmN0nGW",
+  "newPassword": "123"
+}
+
+### 구글 로그인
+POST http://localhost:8082/api/login/google
+// POST http://3.34.149.107:8082/api/login/google
+
+### 토큰 정보 가져오기 API
+// GET http://localhost:8082/api/user/tokenInfo
+GET http://3.34.149.107:8082/api/user/tokenInfo
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzMzMiLCJlbWFpbCI6IjMzM0BuYXZlci5jb20iLCJpYXQiOjE2ODc1MDk4MDgsImV4cCI6MTY4NzUxMTYwOH0.e2La79s0faknyFWFSqZrod4ol2W_g__k7wyQHohoAV-RLmg4iayHuQ1PzoEe3Lw3MEWYPliq_JrvesyuJ90NZQ
+
+### 유저 정보 변경 API
+POST http://localhost:8082/api/user/changeUserInfo
+Content-Type: application/json
+
+{
+  "email": "555@naver.com",
+  "newNickname": "test55"
+}
+
+### 좋아요 기능 API
+POST http://localhost:8082/api/store/1/toggle-like
+// POST http://3.34.149.107:8082/api/store/2/toggle-like
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImVtYWlsIjoidGVzdDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3ODYzNDgzLCJleHAiOjE2ODc4NjUyODN9.xmCHGBXfxAQziuDJt8RISzzxzcwP4VI1mmAe6KSa2vQ26vQusmhpDSEO6KO07Z72anbu0GAF8Kgv9uPNX27bMA
+
+### POPIT 셀러 권한 추가
+POST http://localhost:8082/api/sellerEnter
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OSIsImVtYWlsIjoidGVzdDlAbmF2ZXIuY29tIiwiaWF0IjoxNjg3ODY2MzEwLCJleHAiOjE2ODc4NjgxMTB9.Z99pMV1tGNqLo1Tf9E375jkYRqiBxhBfiZWkpxzvMvWz7KQbh3gdLUgzpj3Yw9JCVRmKhQPIK0FQN-13_a6Frw
+
+{
+  "storeName": "storeName15",
+  "storeAddress": "경기 광명시 디지털로 63",
+  "openTime": "10:30",
+  "closeTime": "20:30",
+  "openDate": "2023-06-24",
+  "closeDate": "2023-07-24",
+  "storeType": "POPUP_STORE",
+  "storeImage" : "qwer.jpg",
+  "businessLicenseNumber": "businessLicenseNumber5"
+}
+
+### 셀러 정보 수정하기
+PUT http://localhost:8082/api/seller/sellerEnter
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OSIsImVtYWlsIjoidGVzdDlAbmF2ZXIuY29tIiwiaWF0IjoxNjg3ODY2MzEwLCJleHAiOjE2ODc4NjgxMTB9.Z99pMV1tGNqLo1Tf9E375jkYRqiBxhBfiZWkpxzvMvWz7KQbh3gdLUgzpj3Yw9JCVRmKhQPIK0FQN-13_a6Frw
+
+{
+  "storeAddress": "서울 관악구 신림동 408-10",
+  "openTime": "10:31",
+  "closeTime": "20:31",
+  "openDate": "2023-06-25",
+  "closeDate": "2023-07-25"
 }

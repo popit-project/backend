@@ -165,6 +165,7 @@ public class UserService {
         newUser.setUserId(generateRandomAlphanumericString(8)); // 임시 user ID 생성
         newUser.setPassword(generateRandomAlphanumericString(8)); // 임시 비밀번호 생성
         newUser.setPhone("000-0000-0000"); // 임시 전화번호 설정
+        newUser.setNickname("googleNick");
 
         userRepository.save(newUser);
 

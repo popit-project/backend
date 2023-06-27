@@ -3,6 +3,9 @@ package com.popit.popitproject.store.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.user.entity.UserEntity;
+import com.popit.popitproject.store.exception.KakaoAddressChange;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;
@@ -43,19 +46,24 @@ public class StoreSellerDTO {
     private Double y;
 
     // 유저 아이디가 따로 없는 이유는 스프링 시큐리티를 이용해 인증을 구현하여서 유저가 자기 아이디를 넘겨주지 않아도 인증이가능하다.
-    public static StoreEntity toEntity(final StoreSellerDTO dto) {
-        return StoreEntity.builder()
-            .id(dto.getId())
-            .storeName(dto.getStoreName())
-            .storeImage(dto.getStoreImage())
-            .storeType(StoreType.valueOf(dto.getStoreType()))
-            .storeAddress(dto.getStoreAddress())
-            .openTime(dto.getOpenTime())
-            .closeTime(dto.getCloseTime())
-            .openDate(dto.getOpenDate())
-            .closeDate(dto.getCloseDate())
-            .user(dto.getUser())
-            .build();
-    }
+    public static StoreEntity toEntity(final StoreSellerDTO dto) throws IOException {
 
+        String newAddress = dto.getStoreAddress();
+        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+
+        return StoreEntity.builder()
+                .id(dto.getId())
+                .storeName(dto.getStoreName())
+                .storeImage(dto.getStoreImage())
+                .storeType(StoreType.valueOf(dto.getStoreType()))
+                .storeAddress(dto.getStoreAddress())
+                .openTime(dto.getOpenTime())
+                .closeTime(dto.getCloseTime())
+                .openDate(dto.getOpenDate())
+                .closeDate(dto.getCloseDate())
+                .x(change.getX())
+                .y(change.getY())
+                .user(dto.getUser())
+                .build();
+    }
 }
