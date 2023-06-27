@@ -11,4 +11,5 @@ public class UserDTO {
     private String passwordCheck;
     private String email;
     private String phone;
+    private String nickname;
 }
