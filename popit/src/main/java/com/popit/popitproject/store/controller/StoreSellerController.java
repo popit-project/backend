@@ -34,7 +34,7 @@ public class StoreSellerController {
     private final StoreSellerService sellerService;
     private final StoreSellerRepository storeRepository;
 
-    @PostMapping("/sellerEnter")
+    @PostMapping("/user/sellerEnter")
     public ResponseEntity<?> sellerEntered(@AuthenticationPrincipal String userId,
         @RequestBody StoreSellerDTO sellerDTO) throws IOException {
 
@@ -74,7 +74,7 @@ public class StoreSellerController {
     }
 
     // TODO: 입점했던 정보를 수정하기
-    @PutMapping("/sellerEnter")
+    @PutMapping("/seller/sellerEnter")
     public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
         @RequestBody UpdateStoreSellerDTO updatedStore) throws IOException {
 
@@ -117,7 +117,7 @@ public class StoreSellerController {
         return ResponseEntity.ok().body(sellerResponse);
     }
 
-    @GetMapping("/sellerMode")
+    @GetMapping("/user/sellerMode")
     public ResponseEntity<?> sellerMode(@AuthenticationPrincipal String userId) {
 
         // 토큰에서 가지고 온 유저
@@ -130,7 +130,7 @@ public class StoreSellerController {
         return ResponseEntity.ok().body("판매자 모드로 전환되었습니다. " + user.getSellerModeButton());
     }
 
-    @GetMapping("/userMode")
+    @GetMapping("/seller/userMode")
     public ResponseEntity<?> userMode(@AuthenticationPrincipal String userId) {
 
         // 토큰에서 가지고 온 유저
