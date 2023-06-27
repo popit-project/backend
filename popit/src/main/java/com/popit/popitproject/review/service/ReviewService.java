@@ -11,7 +11,6 @@ import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

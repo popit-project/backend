@@ -61,6 +61,7 @@ public class StoreController {
     public ResponseEntity<String> updateStore(@PathVariable Long storeId,@RequestBody StoreEntity storeAddress) throws IOException {
         StoreEntity store = storeRepository.findById(storeId)
                 .orElseThrow(()->new IllegalArgumentException(" No matching stores."));
+
         String newAddress = storeAddress.getStoreAddress();
         StoreEntity change =KakaoAddressChange.addressChange(newAddress);
 
