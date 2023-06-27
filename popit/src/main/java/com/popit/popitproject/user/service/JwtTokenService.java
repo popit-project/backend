@@ -50,27 +50,27 @@ public class JwtTokenService {
         return tokenData;
     }
 
-    public String generateSellerToken(Long sellerId, String email) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
-
-        return Jwts.builder()
-                .setSubject(sellerId.toString())
-                .claim("email", email)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(Keys.hmacShaKeyFor(key.getEncoded()), SignatureAlgorithm.HS512)
-                .compact();
-    }
-
-    public String refreshSellerToken(String refreshToken) {
-        if (validateToken(refreshToken)) {
-            String email = getEmailFromToken(refreshToken);
-            Long sellerId = getSellerIdFromToken(refreshToken);
-            return generateSellerToken(sellerId, email);
-        }
-        return null;
-    }
+//    public String generateSellerToken(Long sellerId, String email) {
+//        Date now = new Date();
+//        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
+//
+//        return Jwts.builder()
+//                .setSubject(sellerId.toString())
+//                .claim("email", email)
+//                .setIssuedAt(now)
+//                .setExpiration(expiryDate)
+//                .signWith(Keys.hmacShaKeyFor(key.getEncoded()), SignatureAlgorithm.HS512)
+//                .compact();
+//    }
+//
+//    public String refreshSellerToken(String refreshToken) {
+//        if (validateToken(refreshToken)) {
+//            String email = getEmailFromToken(refreshToken);
+//            Long sellerId = getSellerIdFromToken(refreshToken);
+//            return generateSellerToken(sellerId, email);
+//        }
+//        return null;
+//    }
 
     public boolean validateToken(String token) {
         try {
@@ -91,9 +91,14 @@ public class JwtTokenService {
         return claims.getBody().getSubject();
     }
 
-    public Long getSellerIdFromToken(String token) {
+//    public Long getSellerIdFromToken(String token) {
+//        Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+//        return Long.parseLong(claims.getBody().getSubject());
+//    }
+
+    public String  getSellerIdFromToken(String token) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
-        return Long.parseLong(claims.getBody().getSubject());
+        return claims.getBody().getSubject();
     }
 
     public Authentication getAuthentication(String token) {
