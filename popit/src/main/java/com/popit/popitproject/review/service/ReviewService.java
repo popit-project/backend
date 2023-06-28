@@ -3,6 +3,7 @@ package com.popit.popitproject.review.service;
 import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.review.exception.ReviewException;
 import com.popit.popitproject.review.model.ReviewDto;
+import com.popit.popitproject.review.model.ReviewReadDto;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.repository.StoreRepository;
@@ -45,12 +46,16 @@ public class ReviewService {
         }
     }
     @Transactional
-    public List<ReviewDto> getReviewByStoreId(Long storeId) {
+    public List<ReviewReadDto> getReviewByStoreId(Long storeId) {
         List<ReviewEntity> reviewEntities = reviewRepository.findByStoreId(storeId);
-        List<ReviewDto> reviewDtos = new ArrayList<>();
+
+        List<ReviewReadDto> reviewDtos = new ArrayList<>();
         for(ReviewEntity reviewEntity : reviewEntities){
-            ReviewDto reviewDto = new ReviewDto();
+            ReviewReadDto reviewDto = new ReviewReadDto();
+
             reviewDto.setComment(reviewEntity.getComment());
+            reviewDto.setEmail(String.valueOf(reviewEntity.getEmail().getUserId()));
+
             reviewDtos.add(reviewDto);
         }
         return reviewDtos;
