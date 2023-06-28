@@ -138,7 +138,4 @@ public class NewsService {
         response.setError(errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
-
-
-
 }
