@@ -11,7 +11,6 @@ public class ItemFormDto {
 
   private String itemNm;
   private Integer price;
-  private String itemDetail;
   private Integer stockNumber;
   private String itemSellStatus;
 

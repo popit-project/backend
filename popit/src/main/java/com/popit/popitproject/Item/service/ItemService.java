@@ -1,24 +1,23 @@
 package com.popit.popitproject.Item.service;
 
 import com.popit.popitproject.Item.entity.Item;
-import com.popit.popitproject.Item.model.ItemDTO;
 import com.popit.popitproject.Item.model.ItemInput;
 import com.popit.popitproject.Item.repository.ItemRepository;
-import com.popit.popitproject.config.SecurityConfig;
-import com.popit.popitproject.user.entity.UserEntity;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 @Service
 @AllArgsConstructor
@@ -29,12 +28,14 @@ public class ItemService {
   private final ItemRepository itemRepository;
   private final S3Service s3Service;
 
-  public Item registerItem(ItemInput itemInput) throws IOException {
+
+  public Item registerItem(ItemInput itemInput, String userId) throws IOException {
 
     MultipartFile file = itemInput.getFile();
     String imageUrl = s3Service.uploadFile(file);
 
     Item item = Item.builder()
+        .userId(userId)
         .itemNm(itemInput.getItemNm())
         .price(itemInput.getPrice())
         .stockNumber(itemInput.getStockNumber())
@@ -90,16 +91,21 @@ public class ItemService {
       super("Item with id " + id + " does not exist.");
     }
   }
+//  public void deleteItem(Long id) {
+//    Optional<Item> optionalItem = itemRepository.findById(id);
+//    if (optionalItem.isPresent()) {
+//      itemRepository.delete(optionalItem.get());
+//    } else {
+//      throw new ItemNotFoundException(id);
+//    }
+//  }
+
   public void deleteItem(Long id) {
-    Optional<Item> optionalItem = itemRepository.findById(id);
-    if (optionalItem.isPresent()) {
-      itemRepository.delete(optionalItem.get());
-    } else {
-      throw new ItemNotFoundException(id);
-    }
+    Item item = itemRepository.findById(id)
+        .orElseThrow(() -> new ItemNotFoundException(id));
+    String itemImageUrl = item.getItemImgURL();
+    String fileName = itemImageUrl.replace("https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion() + ".amazonaws.com/", "");
+    s3Service.deleteFile(fileName);
+    itemRepository.deleteById(id);
   }
-
-
-
-
 }
