@@ -76,8 +76,6 @@ public class NewsService {
             .orElseThrow(() -> new RuntimeException("뉴스 아이디에 해당하는 글을 찾을 수 없습니다."));
     }
 
-
-
     // 삭제
     public List<NewsEntity> delete(final NewsEntity entity) {
         // 저장할 엔티티가 유효한지 확인
@@ -97,11 +95,15 @@ public class NewsService {
         return retrieve(entity.getSeller().getId());
     }
 
+//    public UserEntity getUserById(String userId) {
+//        return userRepository.findById(userId)
+//            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+//    }
 
     public UserEntity getUserById(String userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return userRepository.findByUserId(userId);
     }
+
 
     public StoreEntity getSellerByUser(UserEntity user) {
         return sellerRepository.findByUser(user)
