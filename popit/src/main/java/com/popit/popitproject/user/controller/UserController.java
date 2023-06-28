@@ -4,6 +4,7 @@ import com.popit.popitproject.user.model.*;
 import com.popit.popitproject.user.service.JwtTokenService;
 import com.popit.popitproject.user.service.TokenBlacklistService;
 import com.popit.popitproject.user.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,18 @@ public class UserController {
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
+    @ApiOperation(
+            value = "회원 가입"
+            , notes = "ID/이메일 중복체크, PW 맞는지 확인")
     @PostMapping("/register")
     public RegistrationResultDTO registerUser(@RequestBody UserDTO userDto) {
         UserDTO registeredUser = userService.registerUser(userDto);
         return new RegistrationResultDTO(registeredUser, "회원가입에 성공하였습니다.");
     }
 
+    @ApiOperation(
+            value = "이메일 인증"
+            , notes = "회원 가입 시 이메일로 인증 번호 발송")
     @GetMapping("/validate-email")
     public String validateEmail(@RequestParam String userId, @RequestParam String code) {
         boolean isVerified = userService.validateEmail(userId, code);
@@ -49,6 +56,9 @@ public class UserController {
         }
     }
 
+    @ApiOperation(
+            value = "로그인 기능"
+            , notes = "로그인 시 토큰 발행")
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
@@ -62,11 +72,17 @@ public class UserController {
         }
     }
 
+    @ApiOperation(
+            value = "내 정보 보기"
+            , notes = "로그인한 User 정보 보")
     @GetMapping("/info")
     public UserDTO getUserInfo(@RequestParam String userId) {
         return userService.getUserInfo(userId);
     }
 
+    @ApiOperation(
+            value = "ID 찾기"
+            , notes = "이메일 기반으로 ID 찾기")
     @PostMapping("/find-id")
     public ResponseEntity<String> findUserId(@RequestBody FindIdRequest findIdRequest) {
         String userId = userService.findUserIdByEmail(findIdRequest.getEmail());
@@ -77,6 +93,9 @@ public class UserController {
         }
     }
 
+    @ApiOperation(
+            value = "PW 초기화"
+            , notes = "가입 시 입력한 이메일로 임의에 PW를 만들어서 발송")
     @PostMapping("/reset-password")
     public String resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         boolean isReset = userService.resetPasswordByEmail(resetPasswordRequest.getEmail());
@@ -87,6 +106,9 @@ public class UserController {
         }
     }
 
+    @ApiOperation(
+            value = "PW 변경"
+            , notes = "기존 PW, 신규 PW 입력받아 변경")
     @PostMapping("/change-password")
     public String changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         System.out.println("Received userId: " + changePasswordRequest.getUserId());
@@ -101,6 +123,8 @@ public class UserController {
         }
     }
 
+    @ApiOperation(
+            value = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
@@ -111,6 +135,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("토큰이 존재하지 않습니다.");
     }
 
+    @ApiOperation(
+            value = "토큰 정보 확인"
+            , notes = "토큰으로 ID, Email, 토큰 유지시간 확인")
     @GetMapping("/tokenInfo")
     public ResponseEntity<?> getTokenInfo(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
@@ -126,6 +153,8 @@ public class UserController {
         }
     }
 
+    @ApiOperation(
+            value = "닉네임 변경")
     @PostMapping("/changeUserInfo")
     public String changeNickname(@RequestBody ChangeUserInfoRequest changeNicknameRequest) {
         boolean isChanged = userService.changeUserInfo(
