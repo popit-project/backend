@@ -68,8 +68,6 @@ public class NewsService {
         );
     }
 
-
-
     // 검색
     public NewsEntity retrieveById(final Long newsId) {
         return newsRepository.findById(newsId)

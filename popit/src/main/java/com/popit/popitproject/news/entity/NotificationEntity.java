@@ -1,7 +1,6 @@
 package com.popit.popitproject.news.entity;
 
 import com.popit.popitproject.user.entity.UserEntity;
-import com.popit.popitproject.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
 
