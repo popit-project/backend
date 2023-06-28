@@ -14,10 +14,10 @@ import java.time.format.DateTimeFormatter;
 @EntityListeners(AuditingEntityListener.class)
 public class TimeEntity {
     @CreatedDate
-    @Column(name = "created_date",insertable = false, updatable = false)
+    @Column(name = "created_date", updatable = false)
     private String createdDate;
 
-    @Column(name = "modified_date",insertable = false, updatable = false)
+    @Column(name = "modified_date")
     @LastModifiedDate
     private String modifiedDate;
 
