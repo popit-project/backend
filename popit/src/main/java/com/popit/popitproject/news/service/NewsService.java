@@ -68,15 +68,11 @@ public class NewsService {
         );
     }
 
-
-
     // 검색
     public NewsEntity retrieveById(final Long newsId) {
         return newsRepository.findById(newsId)
             .orElseThrow(() -> new RuntimeException("뉴스 아이디에 해당하는 글을 찾을 수 없습니다."));
     }
-
-
 
     // 삭제
     public List<NewsEntity> delete(final NewsEntity entity) {
@@ -97,11 +93,15 @@ public class NewsService {
         return retrieve(entity.getSeller().getId());
     }
 
+//    public UserEntity getUserById(String userId) {
+//        return userRepository.findById(userId)
+//            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+//    }
 
     public UserEntity getUserById(String userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        return userRepository.findByUserId(userId);
     }
+
 
     public StoreEntity getSellerByUser(UserEntity user) {
         return sellerRepository.findByUser(user)
@@ -138,7 +138,4 @@ public class NewsService {
         response.setError(errorMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
-
-
-
 }
