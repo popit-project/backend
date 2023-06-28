@@ -7,9 +7,13 @@ import com.popit.popitproject.Item.repository.ItemRepository;
 import com.popit.popitproject.Item.service.ItemService;
 import com.popit.popitproject.Item.service.ItemService.ItemNotFoundException;
 import com.popit.popitproject.Item.service.S3Service;
+import com.popit.popitproject.store.entity.StoreEntity;
+import com.popit.popitproject.store.repository.StoreRepository;
+import com.popit.popitproject.user.service.JwtTokenService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,18 +37,28 @@ import org.springframework.web.multipart.MultipartFile;
 public class ItemController {
 
   private final ItemService itemService;
-  private final ItemRepository itemRepository;
-  private final S3Service s3Service;
-
-
+  private final JwtTokenService jwtTokenService;
 
   @PostMapping(path = "/profile/item/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Item> register(@RequestPart("itemInput") String itemInputStr,
-      @RequestPart("file") MultipartFile file) throws IOException {
+  public ResponseEntity<?> register(
+      @RequestPart("itemInput") String itemInputStr,
+      @RequestPart("file") MultipartFile file,
+      HttpServletRequest request) throws IOException {
+
+    String token = request.getHeader("Authorization").substring(7); // Extract token
+    if (!jwtTokenService.validateToken(token)) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+    }
+
+    String userId = jwtTokenService.getSellerIdFromToken(token);
+
     ObjectMapper objectMapper = new ObjectMapper();
     ItemInput itemInput = objectMapper.readValue(itemInputStr, ItemInput.class);
     itemInput.setFile(file);
-    Item item = itemService.registerItem(itemInput);
+
+
+    Item item = itemService.registerItem(itemInput, userId);
+
     return new ResponseEntity<>(item, HttpStatus.CREATED);
   }
 
@@ -73,5 +88,7 @@ public class ItemController {
   public List<Item> getItem(@PathVariable String userId) {
     return itemService.getItemsByUserId(userId);
   }
+
+
 }
 

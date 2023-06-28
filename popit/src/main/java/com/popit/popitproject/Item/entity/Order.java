@@ -26,10 +26,6 @@ public class Order {
   @Column(name = "order_id")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_Id")
-  private UserEntity userEntity;
-
   private LocalDateTime orderDate;
 
 //  @Enumerated(EnumType.STRING)

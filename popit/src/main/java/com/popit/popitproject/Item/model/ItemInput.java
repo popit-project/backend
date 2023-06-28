@@ -1,5 +1,6 @@
 package com.popit.popitproject.Item.model;
 
+import com.popit.popitproject.store.entity.StoreEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class ItemInput {
 
   private MultipartFile file;
 
-  private String userId;
+  private String sellerId;
 
 }
+
