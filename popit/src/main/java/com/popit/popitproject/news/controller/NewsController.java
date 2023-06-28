@@ -1,6 +1,5 @@
 package com.popit.popitproject.news.controller;
 
-
 import com.popit.popitproject.common.ResponseDTO;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
