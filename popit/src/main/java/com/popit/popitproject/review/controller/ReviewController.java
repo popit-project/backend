@@ -1,6 +1,7 @@
 package com.popit.popitproject.review.controller;
 
 import com.popit.popitproject.review.model.ReviewDto;
+import com.popit.popitproject.review.model.ReviewReadDto;
 import com.popit.popitproject.review.service.ReviewService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class ReviewController {
             value = "스토어 리뷰 조회"
             , notes = "스토어 ID에 맞는 리뷰를 모두 불러옵니다.")
     @GetMapping("/read/{storeId}/comment")
-    public List<ReviewDto> getReviewsByStoreId(@PathVariable Long storeId) {
+    public List<ReviewReadDto> getReviewsByStoreId(@PathVariable Long storeId) {
         return reviewService.getReviewByStoreId(storeId);
     }
 
