@@ -44,7 +44,7 @@ public class UserEntity {
     }
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller")
     private StoreEntity store;
 
     @Column
