@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -83,6 +84,17 @@ public class UserService {
         return userEntity.getPassword().equals(password);
     }
 
+//    public boolean login(String userId, String password) {
+//        List<UserEntity> userEntities = userRepository.findByUserId(userId);
+//        if (userEntities.isEmpty()) {
+//            return false;
+//        }
+//        if (userEntities.size() > 1) {
+//        }
+//        UserEntity userEntity = userEntities.get(0);
+//        return userEntity.getPassword().equals(password);
+//    }
+
     public UserDTO getUserInfo(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
@@ -95,6 +107,7 @@ public class UserService {
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setPhone(userEntity.getPhone());
         userDTO.setNickname(userEntity.getNickname());
+        userDTO.setSellerModeButton(userEntity.getSellerModeButton());
         return userDTO;
     }
 

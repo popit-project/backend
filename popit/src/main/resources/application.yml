@@ -48,4 +48,4 @@ cloud:
       max-request-size: 100MB
 kakao:
   restapi:
-    key: ${KAKAO_RESTAPI}
+    key: KakaoAK cecd764535a3df2e33f0e29c79e78ba8

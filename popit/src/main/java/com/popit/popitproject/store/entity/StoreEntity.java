@@ -87,4 +87,18 @@ public class StoreEntity implements Serializable{
     // 좋아요 기능을 위해 추가
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<LikeEntity> likes = new ArrayList<>();
+
+    public int getReviewCount() {
+        if (comments == null) {
+            return 0;
+        }
+        return comments.size();
+    }
+    public int getLikeCount() {
+        if (likes == null) {
+            return 0;
+        }
+        return likes.size();
+    }
+
 }

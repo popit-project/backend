@@ -2,9 +2,8 @@ package com.popit.popitproject.review.service;
 
 import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.review.exception.ReviewException;
-import com.popit.popitproject.review.model.CreateReviewRequest;
 import com.popit.popitproject.review.model.ReviewDto;
-import com.popit.popitproject.review.model.UpdateReviewRequest;
+import com.popit.popitproject.review.model.ReviewReadDto;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.repository.StoreRepository;
@@ -26,12 +25,10 @@ public class ReviewService {
     private final StoreRepository storeRepository;
 
     @Transactional
-    public void createComment(Long storeId, CreateReviewRequest createReviewRequest){
+    public void createComment(Long storeId, String email, ReviewDto reviewDto){
+        String comment = reviewDto.getComment();
 
-        String email = createReviewRequest.getEmail();
-        String comment = createReviewRequest.getComment();
-
-        UserEntity user = userRepository.findByEmail(email);
+        UserEntity user = userRepository.findByUserId(email);
         if(user == null){
             throw new ReviewException("No valid user information.");
         }
@@ -49,13 +46,16 @@ public class ReviewService {
         }
     }
     @Transactional
-    public List<ReviewDto> getReviewByStoreId(Long storeId) {
+    public List<ReviewReadDto> getReviewByStoreId(Long storeId) {
         List<ReviewEntity> reviewEntities = reviewRepository.findByStoreId(storeId);
-        List<ReviewDto> reviewDtos = new ArrayList<>();
+
+        List<ReviewReadDto> reviewDtos = new ArrayList<>();
         for(ReviewEntity reviewEntity : reviewEntities){
-            ReviewDto reviewDto = new ReviewDto();
+            ReviewReadDto reviewDto = new ReviewReadDto();
+
             reviewDto.setComment(reviewEntity.getComment());
-            reviewDto.setEmail(reviewEntity.getEmail().getEmail());
+            reviewDto.setEmail(String.valueOf(reviewEntity.getEmail().getUserId()));
+
             reviewDtos.add(reviewDto);
         }
         return reviewDtos;
@@ -78,7 +78,7 @@ public class ReviewService {
         if (optionalReview.isPresent()) {
             ReviewEntity review = optionalReview.get();
 
-            if (!review.getEmail().getEmail().equals(email)) {
+            if (!review.getEmail().getUserId().equals(email)) {
                 throw new ReviewException("You do not have permission to delete this review.");
             }
 
@@ -88,16 +88,18 @@ public class ReviewService {
         }
     }
     @Transactional
-    public void updateReview(Long id, UpdateReviewRequest updateReviewRequest) {
+    public void updateReview(Long id, String email, ReviewDto reviewDto) {
+
+
         Optional<ReviewEntity> optionalReview = reviewRepository.findById(id);
         if (optionalReview.isPresent()) {
             ReviewEntity review = optionalReview.get();
 
-            if (!review.getEmail().getEmail().equals(updateReviewRequest.getEmail())) {
+            if (!review.getEmail().getUserId().equals(email)) {
                 throw new ReviewException("You do not have permission to update this review.");
             }
 
-            review.setComment(updateReviewRequest.getComment());
+            review.setComment(reviewDto.getComment());
 
             reviewRepository.save(review);
         } else {

@@ -4,27 +4,27 @@ POST http://localhost:8082/api/user/register
 Content-Type: application/json
 
 {
-  "userId": "test9",
-  "password": "test9",
-  "passwordCheck": "test9",
-  "email" : "test9@naver.com",
-  "phone": "010-9999-9999",
-  "nickname": "test9"
+  "userId": "t1",
+  "password": "t1",
+  "passwordCheck": "t1",
+  "email" : "t1@naver.com",
+  "phone": "010-1111-1111",
+  "nickname": "t1"
 }
 
 ### 이메일 검증 API
-GET http://localhost:8082/api/user/validate-email?userId=test9&code=321672
+GET http://localhost:8082/api/user/validate-email?userId=t1&code=108411
 // GET http://3.34.149.107:8082/api/user/validate-email?userId=test1&code=404769
 Content-Type: application/json
 
 ### 로그인 API
-// POST http://3.34.149.107:8082/api/user/login
+//POST http://3.34.149.107:8082/api/user/login
 POST http://localhost:8082/api/user/login
 Content-Type: application/json
 
 {
-  "userId": "test9",
-  "password": "test9"
+  "userId": "t1",
+  "password": "t1"
 }
 
 ### 로그아웃 API
@@ -86,16 +86,17 @@ Content-Type: application/json
 
 ### 좋아요 기능 API
 POST http://localhost:8082/api/store/1/toggle-like
+//POST http://localhost:8082/api/store/{storeId}/toggle-like
 // POST http://3.34.149.107:8082/api/store/2/toggle-like
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MSIsImVtYWlsIjoidGVzdDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3ODYzNDgzLCJleHAiOjE2ODc4NjUyODN9.xmCHGBXfxAQziuDJt8RISzzxzcwP4VI1mmAe6KSa2vQ26vQusmhpDSEO6KO07Z72anbu0GAF8Kgv9uPNX27bMA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
 
 ### POPIT 셀러 권한 추가
 POST http://localhost:8082/api/sellerEnter
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OSIsImVtYWlsIjoidGVzdDlAbmF2ZXIuY29tIiwiaWF0IjoxNjg3ODY2MzEwLCJleHAiOjE2ODc4NjgxMTB9.Z99pMV1tGNqLo1Tf9E375jkYRqiBxhBfiZWkpxzvMvWz7KQbh3gdLUgzpj3Yw9JCVRmKhQPIK0FQN-13_a6Frw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
 
 {
-  "storeName": "storeName15",
+  "storeName": "storeName1234",
   "storeAddress": "경기 광명시 디지털로 63",
   "openTime": "10:30",
   "closeTime": "20:30",
@@ -109,7 +110,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OSIsImVtYWlsIjoidGVzd
 ### 셀러 정보 수정하기
 PUT http://localhost:8082/api/seller/sellerEnter
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OSIsImVtYWlsIjoidGVzdDlAbmF2ZXIuY29tIiwiaWF0IjoxNjg3ODY2MzEwLCJleHAiOjE2ODc4NjgxMTB9.Z99pMV1tGNqLo1Tf9E375jkYRqiBxhBfiZWkpxzvMvWz7KQbh3gdLUgzpj3Yw9JCVRmKhQPIK0FQN-13_a6Frw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
 
 {
   "storeAddress": "서울 관악구 신림동 408-10",
@@ -118,3 +119,34 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0OSIsImVtYWlsIjoidGVzd
   "openDate": "2023-06-25",
   "closeDate": "2023-07-25"
 }
+
+### 소식 작성
+POST http://localhost:8082/api/seller/news
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
+
+{
+  "title": "제목 Test4",
+  "content": "내용 Test4",
+  "image": "test4.jpg"
+}
+
+### 알림 Count
+GET http://localhost:8082/api/seller/notifications/count
+// GET http://3.34.149.107:8082/api/seller/notifications/count
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
+
+### 알림 리스트
+GET http://localhost:8082/api/seller/notifications
+// GET http://3.34.149.107:8082/api/seller/notifications
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
+
+### 특정 알림 삭제
+DELETE http://localhost:8082/api/seller/notifications/{notificationId}
+// DELETE http://3.34.149.107:8082/api/seller/notifications/{notificationId}
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A
+
+### 사용자 알림 전체 삭제
+DELETE http://localhost:8082/api/seller/notifications
+// DELETE http://3.34.149.107:8082/api/seller/notifications
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0MSIsImVtYWlsIjoidDFAbmF2ZXIuY29tIiwiaWF0IjoxNjg3OTMwNDk4LCJleHAiOjE2ODc5MzIyOTh9.mimM47vsrOaunLgGYHIXpTC54Mk_YDzQATJWKwBgaM7bmFUAo2SE_KxiSmn9j--Yee7L80oisHA4z3Z1qq8a6A

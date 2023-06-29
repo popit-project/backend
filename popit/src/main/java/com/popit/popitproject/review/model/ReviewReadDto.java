@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateReviewRequest {
-    private String email;
+public class ReviewReadDto {
     private String comment;
+    private String email;
 }
