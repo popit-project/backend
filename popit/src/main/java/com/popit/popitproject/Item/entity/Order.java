@@ -2,40 +2,50 @@ package com.popit.popitproject.Item.entity;
 
 import com.popit.popitproject.user.entity.UserEntity;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "orders")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Order {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "order_id")
   private Long id;
 
-  private LocalDateTime orderDate;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "item_id", nullable = false)
+  private Item item;
 
-//  @Enumerated(EnumType.STRING)
-  private String orderStatus;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserEntity user;
 
-  private LocalDateTime regTime;
+  @Column(nullable = false)
+  private int quantity;
 
-  private LocalDateTime updateTime;
+  @Column(nullable = false)
+  private double price;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<OrderItem> orderItems = new ArrayList<>();
+  private LocalDateTime orderTime;
 
+  public double getTotalCost() {
+    return quantity * price;
+  }
 }

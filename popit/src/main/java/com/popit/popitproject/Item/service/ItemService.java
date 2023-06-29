@@ -3,6 +3,9 @@ package com.popit.popitproject.Item.service;
 import com.popit.popitproject.Item.entity.Item;
 import com.popit.popitproject.Item.model.ItemInput;
 import com.popit.popitproject.Item.repository.ItemRepository;
+import com.popit.popitproject.user.entity.UserEntity;
+import com.popit.popitproject.user.model.UserDTO;
+import com.popit.popitproject.user.repository.UserRepository;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +30,7 @@ public class ItemService {
 
   private final ItemRepository itemRepository;
   private final S3Service s3Service;
+  private final UserRepository userRepository;
 
 
   public Item registerItem(ItemInput itemInput, String userId) throws IOException {
@@ -34,7 +38,15 @@ public class ItemService {
     MultipartFile file = itemInput.getFile();
     String imageUrl = s3Service.uploadFile(file);
 
+    UserEntity userEntity = userRepository.findByUserId(userId);
+
+    if (userEntity == null) {
+      throw new IllegalArgumentException("가입 된 회원이 아닙니다.");
+    }
+
+
     Item item = Item.builder()
+        .sellerId(userEntity.getStore().getId())
         .userId(userId)
         .itemNm(itemInput.getItemNm())
         .price(itemInput.getPrice())
@@ -48,8 +60,8 @@ public class ItemService {
     return itemRepository.save(item);
   }
 
-  public List<Item> getItemsByUserId(String userId) {
-    return itemRepository.findByUserId(userId);
+  public List<Item> getfindBySellerId(Long sellerId) {
+    return itemRepository.findBySellerId(sellerId);
   }
 
   public Item updateItemImage(Long id, MultipartFile file) throws IOException {

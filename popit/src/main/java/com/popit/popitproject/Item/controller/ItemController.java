@@ -10,6 +10,7 @@ import com.popit.popitproject.Item.service.S3Service;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.user.service.JwtTokenService;
+import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,9 @@ public class ItemController {
   private final ItemService itemService;
   private final JwtTokenService jwtTokenService;
 
+  @ApiOperation(
+      value = "상품 등록"
+      , notes = "상품을 등록하는 API ")
   @PostMapping(path = "/profile/item/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<?> register(
       @RequestPart("itemInput") String itemInputStr,
@@ -56,24 +60,30 @@ public class ItemController {
     ItemInput itemInput = objectMapper.readValue(itemInputStr, ItemInput.class);
     itemInput.setFile(file);
 
-
     Item item = itemService.registerItem(itemInput, userId);
 
     return new ResponseEntity<>(item, HttpStatus.CREATED);
   }
 
+  @ApiOperation(
+      value = "상품 이미지 수정"
+      , notes = "상품의 이미지를 수정")
   @PatchMapping(path = "/item/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Item> updateItemImage(@PathVariable Long id, @RequestPart("file") MultipartFile file) throws IOException {
     Item updatedItem = itemService.updateItemImage(id, file);
     return new ResponseEntity<>(updatedItem, HttpStatus.OK);
   }
-
+  @ApiOperation(
+      value = "상품 내용 수정"
+      , notes = "상품의 수량, 상태를 수정한다. ")
   @PatchMapping("/profile/item/update/{id}")
   public ResponseEntity<Item> update(@PathVariable Long id, @RequestBody ItemInput itemInput) {
     Item item = itemService.updateItem(id, itemInput);
     return new ResponseEntity<>(item, HttpStatus.OK);
   }
-
+  @ApiOperation(
+      value = "상품 삭제"
+      , notes = "상품을 삭제")
   @DeleteMapping("/profile/item/delete/{id}")
   public ResponseEntity<String> delete(@PathVariable Long id) {
     try {
@@ -83,10 +93,12 @@ public class ItemController {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
   }
-
-  @GetMapping("/item/{userId}")
-  public List<Item> getItem(@PathVariable String userId) {
-    return itemService.getItemsByUserId(userId);
+  @ApiOperation(
+      value = "sellerId를 통해 상품검색"
+      , notes = "상품을 검색합니다.")
+  @GetMapping("/item/{sellerId}")
+  public List<Item> getItem(@PathVariable Long sellerId) {
+    return itemService.getfindBySellerId(sellerId);
   }
 
 
