@@ -31,6 +31,7 @@ public class OrderService {
         throw new IllegalArgumentException("재고를 확인해주세요");
       }
 
+
       Order order = Order.builder()
           .item(item)
           .price(orderItem.getPrice())
@@ -39,8 +40,12 @@ public class OrderService {
           .build();
 
       item.setStockNumber(item.getStockNumber() - orderItem.getQuantity());
-      itemRepository.save(item);
 
+      if (item.getStockNumber() <= 0) {
+        item.setItemSellStatus("SOLD_OUT");
+      }
+
+      itemRepository.save(item);
       orderRepository.save(order);
     }
   }
