@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewReadDto {
+    private Long id;
     private String comment;
     private String email;
 }
