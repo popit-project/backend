@@ -52,7 +52,7 @@ public class ReviewService {
         List<ReviewReadDto> reviewDtos = new ArrayList<>();
         for(ReviewEntity reviewEntity : reviewEntities){
             ReviewReadDto reviewDto = new ReviewReadDto();
-
+            reviewDto.setId(reviewEntity.getId());
             reviewDto.setComment(reviewEntity.getComment());
             reviewDto.setEmail(String.valueOf(reviewEntity.getEmail().getUserId()));
 
@@ -87,6 +87,7 @@ public class ReviewService {
             throw new ReviewException("No valid review information.");
         }
     }
+
     @Transactional
     public void updateReview(Long id, String email, ReviewDto reviewDto) {
 

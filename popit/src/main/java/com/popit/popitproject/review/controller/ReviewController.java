@@ -28,7 +28,7 @@ public class ReviewController {
 
     @ApiOperation(
             value = "스토어 리뷰 조회"
-            , notes = "스토어 ID에 맞는 리뷰를 모두 불러옵니다.")
+            , notes = "스토어 ID에 맞는 리뷰와 를 모두 불러옵니다.")
     @GetMapping("/read/{storeId}/comment")
     public List<ReviewReadDto> getReviewsByStoreId(@PathVariable Long storeId) {
         return reviewService.getReviewByStoreId(storeId);
