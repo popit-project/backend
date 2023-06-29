@@ -1,8 +1,10 @@
 package com.popit.popitproject.Item.entity;
 
 import com.popit.popitproject.Item.model.ItemInput;
+import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.user.entity.UserEntity;
 import java.time.LocalDateTime;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -53,6 +55,8 @@ public class Item {
 
 //  @Enumerated(EnumType.STRING)
   private String itemSellStatus; //상품 판매 상태
+
+  private Long sellerId;
 
   private LocalDateTime regTime;
   private LocalDateTime updateTime;

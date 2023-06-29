@@ -14,11 +14,4 @@ public class ItemFormDto {
   private Integer stockNumber;
   private String itemSellStatus;
 
-  // 상품 저장 후 수정 할때 상품 이미지 정보를 저장하는 리스트
-  private List<ItemImgDto> itemImgDtoList = new ArrayList<>();
-
-  // 상품의 이미지 아이디 저장
-  private List<Long> itemImgIds = new ArrayList<>();
-
-
 }
