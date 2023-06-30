@@ -91,6 +91,11 @@ public class ItemService {
     }
     if (itemInput.getStockNumber() != null) {
       item.setStockNumber(itemInput.getStockNumber());
+
+      if (itemInput.getStockNumber() > 0) {
+        item.setItemSellStatus(null);
+      }
+
     }
 
     item.setUpdateTime(LocalDateTime.now());
@@ -103,14 +108,6 @@ public class ItemService {
       super("Item with id " + id + " does not exist.");
     }
   }
-//  public void deleteItem(Long id) {
-//    Optional<Item> optionalItem = itemRepository.findById(id);
-//    if (optionalItem.isPresent()) {
-//      itemRepository.delete(optionalItem.get());
-//    } else {
-//      throw new ItemNotFoundException(id);
-//    }
-//  }
 
   public void deleteItem(Long id) {
     Item item = itemRepository.findById(id)
