@@ -1,8 +1,9 @@
 package com.popit.popitproject.store.model;
 
-public enum StoreType {
-    POPUP_STORE("Popup store"),
-    FLEA_MARKET("Flea market");
+public enum StoreType{
+    POPUP_STORE("팝업스토어"),
+    FLEA_MARKET("플리마켓"),
+    CHOOSE_TYPE("선택안함");
 
     private final String displayName;
 

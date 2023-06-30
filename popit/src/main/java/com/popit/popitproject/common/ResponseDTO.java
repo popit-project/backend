@@ -17,8 +17,5 @@ public class ResponseDTO<T> {
 
     private String error;
     private Object data;
-    private List<T> datas;
-
-
-
+//    private List<T> datas;
 }

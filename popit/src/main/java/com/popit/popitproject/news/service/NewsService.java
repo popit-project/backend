@@ -1,26 +1,26 @@
 package com.popit.popitproject.news.service;
 
+import com.popit.popitproject.Item.service.S3Service;
 import com.popit.popitproject.common.ResponseDTO;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
+import com.popit.popitproject.news.model.NewsListResponseDTO;
 import com.popit.popitproject.news.repository.NewsRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
-import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 서비스 레이어는 컨트롤러와 퍼시스턴스 사이에서 비즈니스 로직을 수행하는 역할을 한다. HTTP와 긴밀히 연관된 컨트롤러에서 분리돼 있고, 또 데이터 베이스와 긴밀히 연관된
- * 퍼시스턴스와도 분리돼 있다.
- */
 
 @Slf4j
 @Service
@@ -30,12 +30,33 @@ public class NewsService {
     private final NewsRepository newsRepository;
     private final StoreSellerRepository sellerRepository;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
+    private final KakaoAddressParseService kakaoAddressParse;
+
+
+    public List<NewsEntity> createNews(MultipartFile file, NewsDTO dto, UserEntity user,
+        StoreEntity store) throws java.io.IOException {
+
+        // 받은 데이터를 엔티티로 변환
+        NewsEntity newsEntity = convertToEntity(dto);
+        String imageUrl = s3Service.uploadFile(file);
+
+        newsEntity.setStoreName(store.getStoreName());
+        newsEntity.setCity(kakaoAddressParse.parseAddress(store.getStoreAddress())); // 동만 나오게
+        newsEntity.setCreateTime(LocalDateTime.now());
+        newsEntity.setSeller(user.getStore());
+        newsEntity.setNewsImgURL(imageUrl);
+        newsEntity.setNewsNumber(newsRepository.countNewsByStoreId(store.getId())+1);
+
+        return newsSaveToList(newsEntity);
+    }
 
     // 생성 create
-    public List<NewsEntity> create(final NewsEntity entity) {
+    @Transactional
+    public List<NewsEntity> newsSaveToList(final NewsEntity entity) {
         // Validations
         validate(entity);
-
+        // 엔티티 저장
         newsRepository.save(entity);
 
         log.info("Entity Id : {} is saved", entity.getId());
@@ -43,6 +64,27 @@ public class NewsService {
         return newsRepository.findBySeller(entity.getSeller()).orElseThrow(
             ()-> new RuntimeException("사용자 정보 x")
         );
+    }
+
+    public String formatTimeAgo(LocalDateTime createTime) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        long minutes = ChronoUnit.MINUTES.between(createTime, currentDateTime);
+
+        if (minutes < 60) {
+            return minutes + "분 전";
+        } else if (minutes < 24 * 60) {
+            long hours = minutes / 60;
+            return hours + "시간 전";
+        } else if (minutes < 30 * 24 * 60) {
+            long days = minutes / (24 * 60);
+            return days + "일 전";
+        } else if (minutes < 12 * 30 * 24 * 60) {
+            long months = minutes / (30 * 24 * 60);
+            return months + "달 전";
+        } else {
+            long years = minutes / (12 * 30 * 24 * 60);
+            return years + "년 전";
+        }
     }
 
     // 컨트롤러(DTO)에서 생성된 엔티티가 있는지에 대한 검증
@@ -93,11 +135,6 @@ public class NewsService {
         return retrieve(entity.getSeller().getId());
     }
 
-//    public UserEntity getUserById(String userId) {
-//        return userRepository.findById(userId)
-//            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-//    }
-
     public UserEntity getUserById(String userId) {
         return userRepository.findByUserId(userId);
     }
@@ -123,6 +160,14 @@ public class NewsService {
             .data(dtos)
             .build();
     }
+
+    public ResponseDTO<NewsDTO> getResponseListDTO(List<NewsListResponseDTO> dtos) {
+        // 변환된 TodoDto 리스트를 이용해서 리스펀스를 초기화
+        return ResponseDTO.<NewsDTO>builder()
+            .data(dtos)
+            .build();
+    }
+
 
     // 주소 문자열을 파싱하여 Address 객체로 변환하는 메서드
     public String parseAddress(String fullAddress) {

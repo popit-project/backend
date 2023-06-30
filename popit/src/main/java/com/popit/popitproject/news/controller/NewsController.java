@@ -1,29 +1,37 @@
 package com.popit.popitproject.news.controller;
 
+import com.popit.popitproject.Item.service.S3Service;
 import com.popit.popitproject.common.ResponseDTO;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
+import com.popit.popitproject.news.model.NewsListResponseDTO;
 import com.popit.popitproject.news.model.NotificationDTO;
+import com.popit.popitproject.news.repository.NewsRepository;
 import com.popit.popitproject.news.service.NewsService;
 import com.popit.popitproject.news.service.NotificationService;
-import com.popit.popitproject.store.entity.LikeEntity;
 import com.popit.popitproject.news.entity.NotificationEntity;
+import com.popit.popitproject.store.entity.LikeEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.repository.LikeRepository;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.user.entity.UserEntity;
-import java.time.LocalDateTime;
+import io.jsonwebtoken.io.IOException;
+import io.swagger.annotations.ApiOperation;
 
 import com.popit.popitproject.news.repository.NotificationRepository;
 import com.popit.popitproject.user.repository.UserRepository;
 import com.popit.popitproject.user.service.JwtTokenService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,53 +46,30 @@ public class NewsController {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
 
-//    @PostMapping("/news")
-//    public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
-//        @AuthenticationPrincipal String userId, @RequestBody NewsDTO dto) {
-//        try {
-//            UserEntity user = newsService.getUserById(userId);
-//            NewsEntity entity = newsService.convertToEntity(dto);
-//
-//            StoreEntity store = sellerRepository.findById(user.getStore().getId())
-//                .orElseThrow();
-//
-//            entity.setStoreName(store.getStoreName());
-//            entity.setCity(store.getStoreAddress()); // 동만 나오게
-//            entity.setCreateTime(LocalDateTime.now());
-//            entity.setSeller(user.getStore());
-//
-//            List<NewsEntity> entities = newsService.create(entity);
-//            List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
-//
-//            ResponseDTO<NewsDTO> response = newsService.getResponseDTO(
-//                dtos);
-//
-//            return ResponseEntity.ok().body(response);
-//        } catch (Exception e) {
-//            return newsService.createErrorResponse(e.getMessage());
-//        }
-//    }
-
-    @PostMapping("/news")
+    @ApiOperation(
+        value = "소식 등록",
+        notes = "소식 작성을 하고 저장/등록합니다.")
+    @PostMapping(path = "/news", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
-            @AuthenticationPrincipal String userId, @RequestBody NewsDTO dto) {
+        @AuthenticationPrincipal String userId,
+        @RequestPart("file") MultipartFile file,
+        @RequestPart("dto") NewsDTO dto) throws IOException {
+
         try {
             UserEntity user = newsService.getUserById(userId);
-            NewsEntity entity = newsService.convertToEntity(dto);
-
             StoreEntity store = sellerRepository.findById(user.getStore().getId())
-                    .orElseThrow();
+                .orElseThrow();
 
+            NewsEntity entity = newsService.convertToEntity(dto);
             entity.setStoreName(store.getStoreName());
             entity.setCity(store.getStoreAddress()); // 동만 나오게
             entity.setCreateTime(LocalDateTime.now());
             entity.setSeller(user.getStore());
 
-            List<NewsEntity> entities = newsService.create(entity);
+            List<NewsEntity> entities = newsService.createNews(file, dto, user, store);
 
+// 알림 생성 및 WebSocket을 통한 알림 전송
             List<LikeEntity> likes = likeRepository.findByStore(user.getStore());
-
-            // 알림 생성 및 WebSocket을 통한 알림 전송
             for (LikeEntity like : likes) {
                 NotificationEntity notification = new NotificationEntity();
                 notification.setUser(like.getUser());
@@ -96,9 +81,7 @@ public class NewsController {
             }
 
             List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
-
-            ResponseDTO<NewsDTO> response = newsService.getResponseDTO(
-                    dtos);
+            ResponseDTO<NewsDTO> response = newsService.getResponseDTO(dtos);
 
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -106,58 +89,23 @@ public class NewsController {
         }
     }
 
-    // (원본)
-//    @PostMapping("/news")
-//    public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
-//            @AuthenticationPrincipal String userId, @RequestBody NewsDTO dto) {
-//        try {
-//            UserEntity user = newsService.getUserById(userId);
-//            NewsEntity entity = newsService.convertToEntity(dto);
-//
-//            StoreEntity store = sellerRepository.findById(user.getStore().getId())
-//                    .orElseThrow();
-//
-//            entity.setStoreName(store.getStoreName());
-//            entity.setCity(store.getStoreAddress()); // 동만 나오게
-//            entity.setCreateTime(LocalDateTime.now());
-//            entity.setSeller(user.getStore());
-//
-//            List<NewsEntity> entities = newsService.create(entity);
-//
-//            List<LikeEntity> likes = likeRepository.findByStore(user.getStore());
-//
-//            // 알림 생성
-//            for (LikeEntity like : likes) {
-//                NotificationEntity notification = new NotificationEntity();
-//                notification.setUser(like.getUser());
-//                notification.setMessage(store.getStoreName() + "에서 새 글이 작성되었습니다.");
-//
-//                notificationRepository.save(notification);
-//            }
-//
-//            List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
-//
-//            ResponseDTO<NewsDTO> response = newsService.getResponseDTO(
-//                    dtos);
-//
-//            return ResponseEntity.ok().body(response);
-//        } catch (Exception e) {
-//            return newsService.createErrorResponse(e.getMessage());
-//        }
-//    }
-
-    // Todo : 스토어에 해당하는 목록 가져오기, 내려주는 객체 당 목록 값 바꾸기
+    @ApiOperation(
+        value = "소식 목록",
+        notes = "가게에 해당하는 소식글 리스트를 불러옵니다."
+    )
     @GetMapping("/{storeName}/news")
     public ResponseEntity<ResponseDTO<NewsDTO>> retrieveNewsList(@PathVariable String storeName) {
-
         try {
             StoreEntity store = newsService.getStoreByName(storeName);
             List<NewsEntity> entities = newsService.retrieve(store.getId());
+            List<NewsListResponseDTO> newsResponses = new ArrayList<>();
 
-            List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
+            for (NewsEntity entity : entities) {
+                NewsListResponseDTO newsResponse = NewsListResponseDTO.toDTO(entity);
+                newsResponses.add(newsResponse);
+            }
 
-            ResponseDTO<NewsDTO> response = newsService.getResponseDTO(
-                dtos);
+            ResponseDTO<NewsDTO> response = newsService.getResponseListDTO(newsResponses);
 
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -165,11 +113,13 @@ public class NewsController {
         }
     }
 
-    // Todo : 스토어에 해당하는 목록 가져오기, id로  가져온 news 삭제
+
+    @ApiOperation(
+        value = "소식 삭제"
+        , notes = "가게에 해당하는 목록 가져온 뒤 소식 id로 소식글을 삭제합니다.")
     @DeleteMapping("/{storeName}/news/{newsId}")
     public ResponseEntity<ResponseDTO<NewsDTO>> deleteNews(
         @AuthenticationPrincipal String userId, @PathVariable Long newsId) {
-
 
         try {
             UserEntity user = newsService.getUserById(userId);
@@ -192,7 +142,8 @@ public class NewsController {
 
     // 알림 Count
     @GetMapping("/notifications/count")
-    public ResponseEntity<?> getNotificationCount(@RequestHeader(value="Authorization") String token) {
+    public ResponseEntity<?> getNotificationCount(
+        @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");
         String userId = jwtTokenService.getUserIdFromToken(token);
         UserEntity user = userRepository.findByUserId(userId);
@@ -204,15 +155,16 @@ public class NewsController {
 
     // 알림 List
     @GetMapping("/notifications")
-    public ResponseEntity<?> getUserNotifications(@RequestHeader(value="Authorization") String token) {
+    public ResponseEntity<?> getUserNotifications(
+        @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");
         String userId = jwtTokenService.getUserIdFromToken(token);
         UserEntity user = userRepository.findByUserId(userId);
 
         List<NotificationEntity> notifications = notificationRepository.findByUser(user);
         List<NotificationDTO> notificationDTOS = notifications.stream()
-                .map(NotificationDTO::new)
-                .collect(Collectors.toList());
+            .map(NotificationDTO::new)
+            .collect(Collectors.toList());
 
         return ResponseEntity.ok(notificationDTOS);
     }
@@ -226,13 +178,14 @@ public class NewsController {
 
     // 알림 전체 삭제
     @DeleteMapping("/notifications")
-    public ResponseEntity<?> deleteAllUserNotifications(@RequestHeader(value="Authorization") String token) {
+    public ResponseEntity<?> deleteAllUserNotifications(
+        @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");
         String userId = jwtTokenService.getUserIdFromToken(token);
         UserEntity user = userRepository.findByUserId(userId);
 
         List<NotificationEntity> notifications = notificationRepository.findByUser(user);
-        for(NotificationEntity notification : notifications) {
+        for (NotificationEntity notification : notifications) {
             notificationRepository.delete(notification);
         }
 

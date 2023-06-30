@@ -8,6 +8,8 @@ import com.popit.popitproject.store.exception.KakaoAddressChange;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +24,7 @@ public class StoreSellerDTO {
 
     private String storeName;
 
-    private String storeImage;
+    private String storeImgURL;
 
     private String storeType; // 사업 종류
 
@@ -42,6 +44,10 @@ public class StoreSellerDTO {
 
     private UserEntity user;
 
+    @NotBlank
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{5}")
+    private String businessLicenseNumber;
+
     private Double x;
     private Double y;
 
@@ -54,13 +60,14 @@ public class StoreSellerDTO {
         return StoreEntity.builder()
                 .id(dto.getId())
                 .storeName(dto.getStoreName())
-                .storeImage(dto.getStoreImage())
+                .image(dto.getStoreImgURL())
                 .storeType(StoreType.valueOf(dto.getStoreType()))
                 .storeAddress(dto.getStoreAddress())
                 .openTime(dto.getOpenTime())
                 .closeTime(dto.getCloseTime())
                 .openDate(dto.getOpenDate())
                 .closeDate(dto.getCloseDate())
+                .businessLicenseNumber(dto.getBusinessLicenseNumber())
                 .x(change.getX())
                 .y(change.getY())
                 .user(dto.getUser())
