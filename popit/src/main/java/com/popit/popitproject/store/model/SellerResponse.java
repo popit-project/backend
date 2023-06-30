@@ -21,17 +21,19 @@ public class SellerResponse {
 
     private String storeImage;
 
-    private String storeType; // 사업 종류
+    private String storeType;
 
-    private String storeAddress; // 매장 주소
+    private String storeAddress;
 
-    private LocalTime openTime; // 운영시간
+    private LocalTime openTime;
 
     private LocalTime closeTime;
 
-    private LocalDate openDate; // 운영기간
+    private LocalDate openDate;
 
     private LocalDate closeDate;
+
+    private String businessLicenseNumber;
 
     private Double x;
     private Double y;

@@ -11,12 +11,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -37,13 +39,15 @@ public class NewsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 오브젝트의 아이디
 
+
     private String storeName;
 
     private String city;
 
     private LocalDateTime createTime; // 운영시간
 
-    private String image; // true - todo를 완료할 경우(checked)
+    @Lob
+    private String newsImgURL; // 이미지가 String으로 처리되어 저장된다.
 
     private String content;
 
@@ -55,4 +59,5 @@ public class NewsEntity {
     @JoinColumn(name = "store_id")
     private StoreEntity seller;
 
+    private Integer newsNumber;
 }
