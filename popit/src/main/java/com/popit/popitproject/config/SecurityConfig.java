@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
                         "/configuration/security", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**").permitAll()
-                .antMatchers("/wss/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
                 .antMatchers("/user/**", "/sellerEnter").hasAnyAuthority("ROLE_USER", "ROLE_SELLER")
                 .antMatchers("/seller/**", "/sellerEnter").hasAnyAuthority("ROLE_SELLER")
                 .anyRequest().authenticated()
