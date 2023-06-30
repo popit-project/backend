@@ -3,19 +3,16 @@ package com.popit.popitproject.Item.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.popit.popitproject.Item.entity.Item;
 import com.popit.popitproject.Item.model.ItemInput;
-import com.popit.popitproject.Item.repository.ItemRepository;
 import com.popit.popitproject.Item.service.ItemService;
 import com.popit.popitproject.Item.service.ItemService.ItemNotFoundException;
-import com.popit.popitproject.Item.service.S3Service;
-import com.popit.popitproject.store.entity.StoreEntity;
-import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.user.service.JwtTokenService;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +34,7 @@ public class ItemController {
 
   private final ItemService itemService;
   private final JwtTokenService jwtTokenService;
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(ItemController.class);
   @ApiOperation(
       value = "상품 등록"
       , notes = "상품을 등록하는 API ")
@@ -47,22 +42,26 @@ public class ItemController {
   public ResponseEntity<?> register(
       @RequestPart("itemInput") String itemInputStr,
       @RequestPart("file") MultipartFile file,
-      HttpServletRequest request) throws IOException {
+      HttpServletRequest request) {
+    try {
+      String token = request.getHeader("Authorization").substring(7); // Extract token
+      if (!jwtTokenService.validateToken(token)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+      }
 
-    String token = request.getHeader("Authorization").substring(7); // Extract token
-    if (!jwtTokenService.validateToken(token)) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+      String userId = jwtTokenService.getSellerIdFromToken(token);
+
+      ObjectMapper objectMapper = new ObjectMapper();
+      ItemInput itemInput = objectMapper.readValue(itemInputStr, ItemInput.class);
+      itemInput.setFile(file);
+
+      Item item = itemService.registerItem(itemInput, userId);
+
+      return new ResponseEntity<>(item, HttpStatus.CREATED);
+    } catch (Exception e) {
+      LOGGER.error("Error while processing request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request");
     }
-
-    String userId = jwtTokenService.getSellerIdFromToken(token);
-
-    ObjectMapper objectMapper = new ObjectMapper();
-    ItemInput itemInput = objectMapper.readValue(itemInputStr, ItemInput.class);
-    itemInput.setFile(file);
-
-    Item item = itemService.registerItem(itemInput, userId);
-
-    return new ResponseEntity<>(item, HttpStatus.CREATED);
   }
 
   @ApiOperation(
