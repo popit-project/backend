@@ -5,6 +5,7 @@ import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
 import com.popit.popitproject.news.model.NotificationDTO;
 import com.popit.popitproject.news.service.NewsService;
+import com.popit.popitproject.news.service.NotificationService;
 import com.popit.popitproject.store.entity.LikeEntity;
 import com.popit.popitproject.news.entity.NotificationEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
@@ -35,6 +36,7 @@ public class NewsController {
     private final NotificationRepository notificationRepository;
     private final JwtTokenService jwtTokenService;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
 //    @PostMapping("/news")
 //    public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
@@ -82,13 +84,15 @@ public class NewsController {
 
             List<LikeEntity> likes = likeRepository.findByStore(user.getStore());
 
-            // 알림 생성
+            // 알림 생성 및 WebSocket을 통한 알림 전송
             for (LikeEntity like : likes) {
                 NotificationEntity notification = new NotificationEntity();
                 notification.setUser(like.getUser());
                 notification.setMessage(store.getStoreName() + "에서 새 글이 작성되었습니다.");
 
-                notificationRepository.save(notification);
+                NotificationEntity savedNotification = notificationRepository.save(notification);
+
+                notificationService.notifyUser(savedNotification);
             }
 
             List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
