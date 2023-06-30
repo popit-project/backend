@@ -1,6 +1,5 @@
 package com.popit.popitproject.Item.entity;
 
-import com.popit.popitproject.user.entity.UserEntity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,12 +16,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orderlist")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class OrderList {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,9 +32,7 @@ public class Order {
   @JoinColumn(name = "item_id", nullable = false)
   private Item item;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserEntity user;
+  private String orderUserId;
 
   @Column(nullable = false)
   private int quantity;
