@@ -106,6 +106,46 @@ public class NewsController {
         }
     }
 
+    // (원본)
+//    @PostMapping("/news")
+//    public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
+//            @AuthenticationPrincipal String userId, @RequestBody NewsDTO dto) {
+//        try {
+//            UserEntity user = newsService.getUserById(userId);
+//            NewsEntity entity = newsService.convertToEntity(dto);
+//
+//            StoreEntity store = sellerRepository.findById(user.getStore().getId())
+//                    .orElseThrow();
+//
+//            entity.setStoreName(store.getStoreName());
+//            entity.setCity(store.getStoreAddress()); // 동만 나오게
+//            entity.setCreateTime(LocalDateTime.now());
+//            entity.setSeller(user.getStore());
+//
+//            List<NewsEntity> entities = newsService.create(entity);
+//
+//            List<LikeEntity> likes = likeRepository.findByStore(user.getStore());
+//
+//            // 알림 생성
+//            for (LikeEntity like : likes) {
+//                NotificationEntity notification = new NotificationEntity();
+//                notification.setUser(like.getUser());
+//                notification.setMessage(store.getStoreName() + "에서 새 글이 작성되었습니다.");
+//
+//                notificationRepository.save(notification);
+//            }
+//
+//            List<NewsDTO> dtos = entities.stream().map(NewsDTO::new).collect(Collectors.toList());
+//
+//            ResponseDTO<NewsDTO> response = newsService.getResponseDTO(
+//                    dtos);
+//
+//            return ResponseEntity.ok().body(response);
+//        } catch (Exception e) {
+//            return newsService.createErrorResponse(e.getMessage());
+//        }
+//    }
+
     // Todo : 스토어에 해당하는 목록 가져오기, 내려주는 객체 당 목록 값 바꾸기
     @GetMapping("/{storeName}/news")
     public ResponseEntity<ResponseDTO<NewsDTO>> retrieveNewsList(@PathVariable String storeName) {

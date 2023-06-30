@@ -2,7 +2,6 @@ package com.popit.popitproject.news.service;
 
 import com.popit.popitproject.news.entity.NotificationEntity;
 import com.popit.popitproject.news.model.NotificationDTO;
-import com.popit.popitproject.user.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
