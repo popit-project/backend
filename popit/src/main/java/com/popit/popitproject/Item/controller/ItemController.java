@@ -59,7 +59,7 @@ public class ItemController {
 
       return new ResponseEntity<>(item, HttpStatus.CREATED);
     } catch (Exception e) {
-      LOGGER.error("Error while processing request", e);
+      LOGGER.error("Error while processing request" + e.getMessage(), e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request");
     }
   }
