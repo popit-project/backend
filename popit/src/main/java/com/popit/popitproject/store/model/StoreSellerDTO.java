@@ -60,7 +60,7 @@ public class StoreSellerDTO {
         return StoreEntity.builder()
                 .id(dto.getId())
                 .storeName(dto.getStoreName())
-                .image(dto.getStoreImgURL())
+                .storeImage(dto.getStoreImgURL())
                 .storeType(StoreType.valueOf(dto.getStoreType()))
                 .storeAddress(dto.getStoreAddress())
                 .openTime(dto.getOpenTime())

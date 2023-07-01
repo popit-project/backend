@@ -72,7 +72,7 @@ public class StoreSellerController {
         SellerResponse sellerResponse = SellerResponse.builder()
             .id(createdSeller.getId())
             .storeName(createdSeller.getStoreName())
-            .storeImage(createdSeller.getImage())
+            .storeImage(createdSeller.getStoreImage())
             .storeType(String.valueOf(createdSeller.getStoreType()))
             .storeAddress(createdSeller.getStoreAddress())
             .openTime(createdSeller.getOpenTime())
@@ -86,7 +86,6 @@ public class StoreSellerController {
         return ResponseEntity.ok().body(sellerResponse);
     }
 
-
     @ApiOperation(
         value = "스토어 프로필 홈"
         , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
@@ -99,7 +98,7 @@ public class StoreSellerController {
         SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
             .storeId(store.getId())
             .sellerId(store.getUser().getStore().getId())
-            .storeImage(store.getImage())
+            .storeImage(store.getStoreImage())
             .storeName(store.getStoreName())
             .storeType(store.getStoreType().getDisplayName())
             .storeAddress(store.getStoreAddress())
@@ -160,7 +159,7 @@ public class StoreSellerController {
         SellerResponse sellerResponse = SellerResponse.builder()
             .id(updatedStoreInfo.getId())
             .storeName(updatedStoreInfo.getStoreName())
-            .storeImage(updatedStoreInfo.getImage())
+            .storeImage(updatedStoreInfo.getStoreImage())
             .storeType(String.valueOf(updatedStoreInfo.getStoreType()))
             .storeAddress(updatedStoreInfo.getStoreAddress())
             .openTime(updatedStoreInfo.getOpenTime())

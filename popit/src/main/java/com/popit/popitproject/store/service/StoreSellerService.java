@@ -39,12 +39,12 @@ public class StoreSellerService {
         throws IOException {
 
         String imageUrl = s3Service.uploadFile(file);
-        store.setImage(imageUrl);
+        store.setStoreImage(imageUrl);
 
         return sellerRepository.save(StoreEntity.builder()
             .id(store.getId())
             .storeName(store.getStoreName())
-            .image(store.getImage())
+            .storeImage(store.getStoreImage())
             .storeType(store.getStoreType())
             .storeAddress(store.getStoreAddress())
             .openTime(store.getOpenTime())
