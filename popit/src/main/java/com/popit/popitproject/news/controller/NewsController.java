@@ -68,7 +68,7 @@ public class NewsController {
 
             List<NewsEntity> entities = newsService.createNews(file, dto, user, store);
 
-// 알림 생성 및 WebSocket을 통한 알림 전송
+            // 알림 생성 및 WebSocket을 통한 알림 전송
             List<LikeEntity> likes = likeRepository.findByStore(user.getStore());
             for (LikeEntity like : likes) {
                 NotificationEntity notification = new NotificationEntity();

@@ -43,12 +43,11 @@ public class StoreEntity implements Serializable {
     private String storeName;
 
     @Lob
-    private String image;
+    private String storeImage;
 
     @Column
     @Enumerated(EnumType.STRING)
     private StoreType storeType;
-
 
     @Column(name = "store_address")
     @NotNull(message = "가게 주소는 필수 입력 항목입니다.")
@@ -114,8 +113,6 @@ public class StoreEntity implements Serializable {
             .storeName(mapMapping.getStoreName())
             .build();
     }
-
-
 
     public int getReviewCount() {
         if (comments == null) {
