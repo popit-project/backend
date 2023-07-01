@@ -89,7 +89,7 @@ public class StoreSellerController {
 
     @ApiOperation(
             value = "스토어 유저용 프로필 홈"
-            , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
+            , notes = "가게의 정보를 줍니다.")
     @GetMapping("/store/{storeId}/storeHome")
     public ResponseEntity<?> userStoreInfo(@PathVariable("storeId") Long storeId) {
 
@@ -99,7 +99,6 @@ public class StoreSellerController {
 
         SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
                 .storeId(store.getId())
-                .sellerId(store.getUser().getStore().getId())
                 .storeImage(store.getStoreImage())
                 .storeName(store.getStoreName())
                 .storeType(store.getStoreType().getDisplayName())
@@ -114,20 +113,19 @@ public class StoreSellerController {
 
     }
 
+
     @ApiOperation(
             value = "스토어 셀러용 프로필 홈"
             , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
-    @GetMapping("/seller/{sellerId}/storeHome")
-    public ResponseEntity<?> sellerStoreInfo(@AuthenticationPrincipal String userId,
-                                             @PathVariable("sellerId") Long sellerId) {
+    @GetMapping("/seller/{userId}/storeHome")
+    public ResponseEntity<?> sellerStoreInfo(@AuthenticationPrincipal String userId) {
 
         UserEntity user = userRepository.findByUserId(userId);
-        StoreEntity store = storeRepository.findById(user.getStore().getId()).orElseThrow(
+        StoreEntity store = storeRepository.findByUser(user).orElseThrow(
                 () -> new RuntimeException("매장을 찾을 수 없습니다.")
         );
 
         SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
-                .sellerId(sellerId)
                 .storeId(store.getId())
                 .sellerId(store.getUser().getStore().getId())
                 .storeImage(store.getStoreImage())
@@ -203,4 +201,6 @@ public class StoreSellerController {
 
         return ResponseEntity.ok().body(sellerResponse);
     }
+
+
 }
