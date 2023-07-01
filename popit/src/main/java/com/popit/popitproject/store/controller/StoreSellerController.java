@@ -203,6 +203,4 @@ public class StoreSellerController {
 
         return ResponseEntity.ok().body(sellerResponse);
     }
-
-
 }
