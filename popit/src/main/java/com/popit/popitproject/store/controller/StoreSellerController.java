@@ -117,7 +117,7 @@ public class StoreSellerController {
     @ApiOperation(
             value = "스토어 셀러용 프로필 홈"
             , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
-    @GetMapping("가")
+    @GetMapping("/seller/{sellerId}/storeHome")
     public ResponseEntity<?> sellerStoreInfo(@AuthenticationPrincipal String userId,
                                              @PathVariable("sellerId") Long sellerId) {
 
@@ -203,6 +203,4 @@ public class StoreSellerController {
 
         return ResponseEntity.ok().body(sellerResponse);
     }
-
-
 }
