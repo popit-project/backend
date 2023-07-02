@@ -1,9 +1,6 @@
 package com.popit.popitproject.user.controller;
 
-import com.popit.popitproject.user.model.GoogleInfResponse;
-import com.popit.popitproject.user.model.GoogleRequest;
-import com.popit.popitproject.user.model.GoogleResponse;
-import com.popit.popitproject.user.model.UserDTO;
+import com.popit.popitproject.user.model.*;
 import com.popit.popitproject.user.service.JwtTokenService;
 import com.popit.popitproject.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +35,6 @@ public class GoogleLoginController {
         return reqUrl;
     }
 
-//    @RequestMapping(value = "/api/login/google", method = RequestMethod.POST)
-//    public String loginUrlGoogle() {
-//        String reqUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
-//                + "&redirect_uri=http://localhost:8082/api/login/google&response_type=code&scope=email%20profile%20openid&access_type=offline";
-//        return reqUrl;
-//    }
-
     @RequestMapping(value = "/api/login/google", method = RequestMethod.GET)
     public ResponseEntity<?> loginGoogle(@RequestParam(value = "code") String authCode) {
         RestTemplate restTemplate = new RestTemplate();
@@ -75,5 +65,18 @@ public class GoogleLoginController {
         Map<String, Object> tokenData = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail());
         userService.updateLastTokenUsed(userDTO.getEmail());
         return ResponseEntity.ok(tokenData);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+        boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
+        if (isLoggedIn) {
+            UserDTO user = userService.getUserInfo(loginRequest.getUserId());
+            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
+            userService.updateLastTokenUsed(user.getEmail());
+            return ResponseEntity.ok(tokenData);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.");
+        }
     }
 }
