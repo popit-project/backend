@@ -34,9 +34,16 @@ public class GoogleLoginController {
     @RequestMapping(value = "/api/login/google", method = RequestMethod.POST)
     public String loginUrlGoogle() {
         String reqUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
-                + "&redirect_uri=http://localhost:8082/api/login/google&response_type=code&scope=email%20profile%20openid&access_type=offline";
+                + "&redirect_uri=http://localhost:5173&response_type=code&scope=email%20profile%20openid&access_type=offline";
         return reqUrl;
     }
+
+//    @RequestMapping(value = "/api/login/google", method = RequestMethod.POST)
+//    public String loginUrlGoogle() {
+//        String reqUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
+//                + "&redirect_uri=http://localhost:8082/api/login/google&response_type=code&scope=email%20profile%20openid&access_type=offline";
+//        return reqUrl;
+//    }
 
     @RequestMapping(value = "/api/login/google", method = RequestMethod.GET)
     public ResponseEntity<?> loginGoogle(@RequestParam(value = "code") String authCode) {
@@ -46,7 +53,7 @@ public class GoogleLoginController {
                 .clientId(googleClientId)
                 .clientSecret(googleClientPw)
                 .code(authCode)
-                .redirectUri("http://localhost:8082/api/login/google")
+                .redirectUri("http://localhost:5173")
                 .grantType("authorization_code").build();
 
         ResponseEntity<GoogleResponse> resultEntity = restTemplate.postForEntity("https://oauth2.googleapis.com/token",
