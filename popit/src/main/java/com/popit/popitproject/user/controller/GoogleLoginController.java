@@ -1,6 +1,9 @@
 package com.popit.popitproject.user.controller;
 
-import com.popit.popitproject.user.model.*;
+import com.popit.popitproject.user.model.GoogleInfResponse;
+import com.popit.popitproject.user.model.GoogleRequest;
+import com.popit.popitproject.user.model.GoogleResponse;
+import com.popit.popitproject.user.model.UserDTO;
 import com.popit.popitproject.user.service.JwtTokenService;
 import com.popit.popitproject.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public class GoogleLoginController {
     }
 
     @RequestMapping(value = "/api/login/google", method = RequestMethod.GET)
-    public void loginGoogle(@RequestParam(value = "code") String authCode, HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> loginGoogle(@RequestParam(value = "code") String authCode) {
         RestTemplate restTemplate = new RestTemplate();
         GoogleRequest googleOAuthRequestParam = GoogleRequest
                 .builder()
@@ -57,6 +59,7 @@ public class GoogleLoginController {
                 map, GoogleInfResponse.class);
         String email = resultEntity2.getBody().getEmail();
 
+
         UserDTO userDTO = userService.findByEmail(email);
         if (userDTO == null) {
             userDTO = userService.registerGoogleUser(email);
@@ -64,24 +67,6 @@ public class GoogleLoginController {
 
         Map<String, Object> tokenData = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail());
         userService.updateLastTokenUsed(userDTO.getEmail());
-
-        String token = (String) tokenData.get("token");
-
-        response.addHeader("Authorization", "Bearer " + token);
-        response.sendRedirect("http://localhost:5173");
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-        boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
-        if (isLoggedIn) {
-            UserDTO user = userService.getUserInfo(loginRequest.getUserId());
-            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
-            userService.updateLastTokenUsed(user.getEmail());
-            String token = (String) tokenData.get("token");
-            return ResponseEntity.ok(token);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.");
-        }
+        return ResponseEntity.ok(tokenData);
     }
 }
