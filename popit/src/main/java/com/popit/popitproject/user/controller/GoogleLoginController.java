@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class GoogleLoginController {
     }
 
     @RequestMapping(value = "/api/login/google", method = RequestMethod.GET)
-    public ResponseEntity<?> loginGoogle(@RequestParam(value = "code") String authCode) {
+    public void loginGoogle(@RequestParam(value = "code") String authCode, HttpServletResponse response) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         GoogleRequest googleOAuthRequestParam = GoogleRequest
                 .builder()
@@ -56,7 +57,6 @@ public class GoogleLoginController {
                 map, GoogleInfResponse.class);
         String email = resultEntity2.getBody().getEmail();
 
-
         UserDTO userDTO = userService.findByEmail(email);
         if (userDTO == null) {
             userDTO = userService.registerGoogleUser(email);
@@ -64,7 +64,10 @@ public class GoogleLoginController {
 
         Map<String, Object> tokenData = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail());
         userService.updateLastTokenUsed(userDTO.getEmail());
-        return ResponseEntity.ok(tokenData);
+
+        String token = (String) tokenData.get("token");
+
+        response.sendRedirect("http://localhost:5173?token=" + token);
     }
 
     @PostMapping("/login")
