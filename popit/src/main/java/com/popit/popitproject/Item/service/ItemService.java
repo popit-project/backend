@@ -94,15 +94,15 @@ public class ItemService {
 
       if (itemInput.getStockNumber() > 0) {
         item.setItemSellStatus(null);
+      } else if (itemInput.getStockNumber() == 0) {
+        item.setItemSellStatus("sold_out");
       }
-
     }
 
     item.setUpdateTime(LocalDateTime.now());
 
     return itemRepository.save(item);
   }
-
   public class ItemNotFoundException extends RuntimeException {
     public ItemNotFoundException(Long id) {
       super("Item with id " + id + " does not exist.");
