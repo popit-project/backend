@@ -166,9 +166,13 @@ public class StoreSellerController {
     @ApiOperation(
             value = "판매자 입점 정보 수정"
             , notes = "가게 입점 정보를 수정합니다.")
-    @PutMapping("/seller/sellerEnter")
+    @PutMapping(path = "/seller/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
-                                              @RequestBody UpdateStoreSellerDTO updatedStore) throws IOException {
+//        @RequestPart(name = "file") MultipartFile file,
+        @RequestPart(name = "updatedStoreDTO") String dtoJson) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        UpdateStoreSellerDTO updatedStore = objectMapper.readValue(dtoJson, UpdateStoreSellerDTO.class);
 
         // 토큰에서 가져온 사용자 정보
         UserEntity user = userRepository.findByUserId(userId);
