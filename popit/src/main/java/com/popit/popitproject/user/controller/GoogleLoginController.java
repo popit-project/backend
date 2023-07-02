@@ -67,7 +67,8 @@ public class GoogleLoginController {
 
         String token = (String) tokenData.get("token");
 
-        response.sendRedirect("http://localhost:5173?token=" + token);
+        response.addHeader("Authorization", "Bearer " + token);
+        response.sendRedirect("http://localhost:5173");
     }
 
     @PostMapping("/login")
@@ -77,7 +78,8 @@ public class GoogleLoginController {
             UserDTO user = userService.getUserInfo(loginRequest.getUserId());
             Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
             userService.updateLastTokenUsed(user.getEmail());
-            return ResponseEntity.ok(tokenData);
+            String token = (String) tokenData.get("token");
+            return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.");
         }
