@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -67,7 +68,7 @@ public class ItemController {
   @ApiOperation(
       value = "상품 이미지 수정"
       , notes = "상품의 이미지를 수정")
-  @PatchMapping(path = "/item/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PutMapping(path = "/item/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<Item> updateItemImage(@PathVariable Long id, @RequestPart("file") MultipartFile file) throws IOException {
     Item updatedItem = itemService.updateItemImage(id, file);
     return new ResponseEntity<>(updatedItem, HttpStatus.OK);
@@ -75,7 +76,7 @@ public class ItemController {
   @ApiOperation(
       value = "상품 내용 수정"
       , notes = "상품의 수량, 상태를 수정한다. ")
-  @PatchMapping("/profile/item/update/{id}")
+  @PutMapping("/profile/item/update/{id}")
   public ResponseEntity<Item> update(@PathVariable Long id, @RequestBody ItemInput itemInput) {
     Item item = itemService.updateItem(id, itemInput);
     return new ResponseEntity<>(item, HttpStatus.OK);
