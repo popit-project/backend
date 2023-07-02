@@ -1,12 +1,10 @@
 package com.popit.popitproject.news.controller;
 
-import com.popit.popitproject.Item.service.S3Service;
 import com.popit.popitproject.common.ResponseDTO;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
 import com.popit.popitproject.news.model.NewsListResponseDTO;
 import com.popit.popitproject.news.model.NotificationDTO;
-import com.popit.popitproject.news.repository.NewsRepository;
 import com.popit.popitproject.news.service.NewsService;
 import com.popit.popitproject.news.service.NotificationService;
 import com.popit.popitproject.news.entity.NotificationEntity;
@@ -35,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/seller")
+@RequestMapping("/api")
 public class NewsController {
 
     private final NewsService newsService;
@@ -49,7 +47,7 @@ public class NewsController {
     @ApiOperation(
         value = "소식 등록",
         notes = "소식 작성을 하고 저장/등록합니다.")
-    @PostMapping(path = "/news", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/seller/news", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
         @AuthenticationPrincipal String userId,
         @RequestPart("file") MultipartFile file,
@@ -113,11 +111,10 @@ public class NewsController {
         }
     }
 
-
     @ApiOperation(
         value = "소식 삭제"
         , notes = "가게에 해당하는 목록 가져온 뒤 소식 id로 소식글을 삭제합니다.")
-    @DeleteMapping("/{storeName}/news/{newsId}")
+    @DeleteMapping("/seller/news/{newsId}")
     public ResponseEntity<ResponseDTO<NewsDTO>> deleteNews(
         @AuthenticationPrincipal String userId, @PathVariable Long newsId) {
 
@@ -141,7 +138,7 @@ public class NewsController {
     }
 
     // 알림 Count
-    @GetMapping("/notifications/count")
+    @GetMapping("/seller/notifications/count")
     public ResponseEntity<?> getNotificationCount(
         @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");
@@ -154,7 +151,7 @@ public class NewsController {
     }
 
     // 알림 List
-    @GetMapping("/notifications")
+    @GetMapping("/seller/notifications")
     public ResponseEntity<?> getUserNotifications(
         @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");
@@ -170,14 +167,14 @@ public class NewsController {
     }
 
     // 알림 삭제
-    @DeleteMapping("/notifications/{notificationId}")
+    @DeleteMapping("/seller/notifications/{notificationId}")
     public ResponseEntity<?> deleteNotification(@PathVariable Long notificationId) {
         notificationRepository.deleteById(notificationId);
         return ResponseEntity.ok().build();
     }
 
     // 알림 전체 삭제
-    @DeleteMapping("/notifications")
+    @DeleteMapping("/seller/notifications")
     public ResponseEntity<?> deleteAllUserNotifications(
         @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");

@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,6 +51,7 @@ public class NewsEntity {
     @Lob
     private String newsImgURL; // 이미지가 String으로 처리되어 저장된다.
 
+    @NotBlank(message = "내용을 입력해 주세요.")
     private String content;
 
     @ManyToOne
