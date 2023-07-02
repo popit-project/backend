@@ -2,7 +2,7 @@ package com.popit.popitproject.store.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.popit.popitproject.news.model.NewsDTO;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.exception.KakaoAddressChange;
 import com.popit.popitproject.store.exception.storeSeller.StoreSellerValidate;
@@ -17,6 +17,7 @@ import com.popit.popitproject.store.service.StoreSellerService;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
 import io.swagger.annotations.ApiOperation;
+
 import java.io.IOException;
 ;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +54,14 @@ public class StoreSellerController {
     private final ObjectMapper objectMapper;
 
     @ApiOperation(
-            value = "판매자 입점신청"
-            , notes = "로그인 후, 해당 사용자의 정보로 가게 입점신청을 진행하고 가게를 생성합니다.")
+        value = "판매자 입점신청"
+        , notes = "로그인 후, 해당 사용자의 정보로 가게 입점신청을 진행하고 가게를 생성합니다.")
     @PostMapping(path = "/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> sellerEntered(@AuthenticationPrincipal String userId,
-                                           @RequestPart(name = "file") MultipartFile file,
-                                           @RequestPart(name = "sellerDTO") String dtoJson) throws IOException {
+        @RequestPart(name = "file") MultipartFile file,
+        @RequestPart(name = "sellerDTO") String dtoJson) throws IOException {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         StoreSellerDTO dto = objectMapper.readValue(dtoJson, StoreSellerDTO.class);
 
         // 유효성 검사
@@ -68,29 +69,28 @@ public class StoreSellerController {
 
         // 서비스를 이용해서 Seller 생성
         StoreEntity createdSeller = sellerService.saveSellerInfo(file, user,
-                StoreSellerDTO.toEntity(dto));
+            StoreSellerDTO.toEntity(dto));
         sellerService.generateSellerRole(user, createdSeller);
 
         String newAddress = createdSeller.getStoreAddress();
         StoreEntity change = KakaoAddressChange.addressChange(newAddress);
 
         SellerResponse sellerResponse = SellerResponse.builder()
-                .id(createdSeller.getId())
-                .storeName(createdSeller.getStoreName())
-                .storeImage(createdSeller.getStoreImage())
-                .storeType(String.valueOf(createdSeller.getStoreType()))
-                .storeAddress(createdSeller.getStoreAddress())
-                .openTime(createdSeller.getOpenTime())
-                .closeTime(createdSeller.getCloseTime())
-                .openDate(createdSeller.getOpenDate())
-                .closeDate(createdSeller.getCloseDate())
-                .businessLicenseNumber(createdSeller.getBusinessLicenseNumber())
-                .x(change.getX())
-                .y(change.getY())
-                .build();
+            .id(createdSeller.getId())
+            .storeName(createdSeller.getStoreName())
+            .storeImage(createdSeller.getStoreImage())
+            .storeType(String.valueOf(createdSeller.getStoreType()))
+            .storeAddress(createdSeller.getStoreAddress())
+            .openTime(createdSeller.getOpenTime())
+            .closeTime(createdSeller.getCloseTime())
+            .openDate(createdSeller.getOpenDate())
+            .closeDate(createdSeller.getCloseDate())
+            .businessLicenseNumber(createdSeller.getBusinessLicenseNumber())
+            .x(change.getX())
+            .y(change.getY())
+            .build();
         return ResponseEntity.ok().body(sellerResponse);
     }
-
 
     @ApiOperation(
             value = "스토어 유저용 프로필 홈"
