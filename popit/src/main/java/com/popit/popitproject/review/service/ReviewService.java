@@ -29,21 +29,29 @@ public class ReviewService {
         String comment = reviewDto.getComment();
 
         UserEntity user = userRepository.findByUserId(email);
-        if(user == null){
-            throw new ReviewException("No valid user information.");
-        }
         Optional<StoreEntity> optionalStore = storeRepository.findById(storeId);
         if (optionalStore.isPresent()) {
             StoreEntity store = optionalStore.get();
             ReviewEntity review = new ReviewEntity();
+
+            boolean hasExistingReview = reviewRepository.existsByStoreAndEmail(store, user);
+            if (hasExistingReview) {
+                throw new ReviewException("이미 작성한 리뷰가 있습니다.");
+            }
+
             review.setComment(comment);
             review.setEmail(user);
             review.setStore(store);
             review.setStoreName(store.getStoreName());
+
+
+
             reviewRepository.save(review);
         } else {
-            throw new ReviewException("No valid store information.");
+            throw new ReviewException("맞는 스토어가 없습니다.");
         }
+
+
     }
     @Transactional
     public List<ReviewReadDto> getReviewByStoreId(Long storeId) {
@@ -79,12 +87,12 @@ public class ReviewService {
             ReviewEntity review = optionalReview.get();
 
             if (!review.getEmail().getUserId().equals(email)) {
-                throw new ReviewException("You do not have permission to delete this review.");
+                throw new ReviewException("삭제할 권한이 없습니다.");
             }
 
             reviewRepository.delete(review);
         } else {
-            throw new ReviewException("No valid review information.");
+            throw new ReviewException("리뷰를 찾을수 없습니다.");
         }
     }
 
@@ -97,14 +105,14 @@ public class ReviewService {
             ReviewEntity review = optionalReview.get();
 
             if (!review.getEmail().getUserId().equals(email)) {
-                throw new ReviewException("You do not have permission to update this review.");
+                throw new ReviewException("수정할 권한이 없습니다.");
             }
 
             review.setComment(reviewDto.getComment());
 
             reviewRepository.save(review);
         } else {
-            throw new ReviewException("No valid review information.");
+            throw new ReviewException("리뷰를 찾을수 없습니다.");
         }
     }
 
