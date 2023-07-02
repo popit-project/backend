@@ -1,6 +1,8 @@
 package com.popit.popitproject.store.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.popit.popitproject.news.model.NewsDTO;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.exception.KakaoAddressChange;
 import com.popit.popitproject.store.exception.storeSeller.StoreSellerValidate;
@@ -48,7 +50,7 @@ public class StoreSellerController {
     private final StoreSellerService sellerService;
     private final StoreSellerRepository storeRepository;
     private final StoreSellerValidate storeSellerValidate;
-
+    private final ObjectMapper objectMapper;
 
     @ApiOperation(
             value = "판매자 입점신청"
@@ -56,14 +58,17 @@ public class StoreSellerController {
     @PostMapping(path = "/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> sellerEntered(@AuthenticationPrincipal String userId,
                                            @RequestPart(name = "file") MultipartFile file,
-                                           @RequestPart(name = "sellerDTO") StoreSellerDTO sellerDTO) throws IOException {
+                                           @RequestPart(name = "sellerDTO") String dtoJson) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        StoreSellerDTO dto = objectMapper.readValue(dtoJson, StoreSellerDTO.class);
 
         // 유효성 검사
-        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, sellerDTO);
+        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, dto);
 
         // 서비스를 이용해서 Seller 생성
         StoreEntity createdSeller = sellerService.saveSellerInfo(file, user,
-                StoreSellerDTO.toEntity(sellerDTO));
+                StoreSellerDTO.toEntity(dto));
         sellerService.generateSellerRole(user, createdSeller);
 
         String newAddress = createdSeller.getStoreAddress();
