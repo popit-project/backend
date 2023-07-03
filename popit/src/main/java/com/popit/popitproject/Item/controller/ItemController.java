@@ -96,9 +96,9 @@ public class ItemController {
   @ApiOperation(
       value = "sellerId를 통해 상품검색"
       , notes = "상품을 검색합니다.")
-  @GetMapping("/item/{sellerId}")
-  public List<Item> getItem(@PathVariable Long sellerId) {
-    return itemService.getfindBySellerId(sellerId);
+  @GetMapping("/item/{storeId}")
+  public List<Item> getItem(@PathVariable Long storeId) {
+    return itemService.getfindBySellerId(storeId);
   }
 
 
