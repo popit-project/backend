@@ -62,6 +62,7 @@ public class StoreSellerController {
         @RequestPart("file") MultipartFile file,
         @RequestPart("sellerDTO") String sellerDTO) throws IOException {
 
+        log.info("판매자 입점신청 시작");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         StoreSellerDTO StoreSellerDTO = objectMapper.readValue(sellerDTO, StoreSellerDTO.class);
         StoreSellerDTO.setStoreImgURL(file);
@@ -70,12 +71,15 @@ public class StoreSellerController {
         UserEntity user = storeSellerValidate.validateSellerRegistration(userId, StoreSellerDTO);
 
         // 서비스를 이용해서 Seller 생성
+
         StoreEntity createdSeller = sellerService.saveSellerInfo(user,StoreSellerDTO);
+        log.info("셀러 권한 세팅 완료");
+
         sellerService.generateSellerRole(user, createdSeller);
 
         String newAddress = createdSeller.getStoreAddress();
         StoreEntity change = KakaoAddressChange.addressChange(newAddress);
-
+        log.info("주소변환 완료");
         SellerResponse sellerResponse = SellerResponse.builder()
             .id(createdSeller.getId())
             .storeName(createdSeller.getStoreName())
@@ -90,6 +94,8 @@ public class StoreSellerController {
             .x(change.getX())
             .y(change.getY())
             .build();
+
+        log.info("판매자 입점신청 완료");
         return ResponseEntity.ok().body(sellerResponse);
     }
 

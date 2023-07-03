@@ -57,12 +57,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(messageTemplates.toString());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body("User not found: " + ex.getMessage());
-    }
-
     @ExceptionHandler(StoreAlreadyRegisteredException.class)
     public ResponseEntity<String> handleStoreAlreadyRegisteredException(
         StoreAlreadyRegisteredException ex) {
@@ -82,32 +76,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 스토어 이름입니다.");
     }
 
-
-    private static class ErrorResponseBody {
-
-        private String error;
-        private List<String> messages;
-
-        public ErrorResponseBody(String error, List<String> messages) {
-            this.error = error;
-            this.messages = messages;
-        }
-
-        public String getError() {
-            return error;
-        }
-
-        public void setError(String error) {
-            this.error = error;
-        }
-
-        public List<String> getMessages() {
-            return messages;
-        }
-
-        public void setMessages(List<String> messages) {
-            this.messages = messages;
-        }
-    }
 
 }

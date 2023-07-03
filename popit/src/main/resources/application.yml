@@ -1,6 +1,6 @@
 server:
   port: 8082
-
+  
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -45,7 +45,7 @@ cloud:
   servlet:
     multipart:
       max-file-size: 50MB
-      max-request-size: 500MB
+      max-request-size: 50MB
 kakao:
   restapi:
     key: KakaoAK cecd764535a3df2e33f0e29c79e78ba8
