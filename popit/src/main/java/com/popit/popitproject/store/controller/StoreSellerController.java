@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.exception.KakaoAddressChange;
-import com.popit.popitproject.store.exception.storeSeller.StoreSellerValidate;
+//import com.popit.popitproject.store.exception.storeSeller.StoreSellerValidate;
 
 import com.popit.popitproject.store.model.SellerResponse;
 import com.popit.popitproject.store.model.SellerStoreHomeResponse;
@@ -51,7 +51,7 @@ public class StoreSellerController {
     private final UserRepository userRepository;
     private final StoreSellerService sellerService;
     private final StoreSellerRepository storeRepository;
-    private final StoreSellerValidate storeSellerValidate;
+//    private final StoreSellerValidate storeSellerValidate;
 
 
     @ApiOperation(
@@ -62,20 +62,24 @@ public class StoreSellerController {
         @RequestPart(name = "file") MultipartFile file,
         @RequestPart(name = "sellerDTO") String dtoJson) throws IOException {
 
+        log.info("판매자 입점신청 시작");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         StoreSellerDTO dto = objectMapper.readValue(dtoJson, StoreSellerDTO.class);
+        UserEntity user = userRepository.findByUserId(userId);
 
         // 유효성 검사
-        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, dto);
+//        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, dto);
 
         // 서비스를 이용해서 Seller 생성
         StoreEntity createdSeller = sellerService.saveSellerInfo(file, user,
             StoreSellerDTO.toEntity(dto));
+
+        log.info("셀러 권한 세팅 완료");
         sellerService.generateSellerRole(user, createdSeller);
 
         String newAddress = createdSeller.getStoreAddress();
         StoreEntity change = KakaoAddressChange.addressChange(newAddress);
-
+        log.info("주소변환 완료");
         SellerResponse sellerResponse = SellerResponse.builder()
             .id(createdSeller.getId())
             .storeName(createdSeller.getStoreName())
@@ -90,6 +94,8 @@ public class StoreSellerController {
             .x(change.getX())
             .y(change.getY())
             .build();
+
+        log.info("판매자 입점신청 완료");
         return ResponseEntity.ok().body(sellerResponse);
     }
 
