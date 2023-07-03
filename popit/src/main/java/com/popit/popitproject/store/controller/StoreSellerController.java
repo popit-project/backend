@@ -59,21 +59,22 @@ public class StoreSellerController {
         , notes = "로그인 후, 해당 사용자의 정보로 가게 입점신청을 진행하고 가게를 생성합니다.")
     @PostMapping(path = "/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> sellerEntered(@AuthenticationPrincipal String userId,
-        @RequestPart(name = "file") MultipartFile file,
-        @RequestPart(name = "sellerDTO") String dtoJson) throws IOException {
+        @RequestPart("file") MultipartFile file,
+        @RequestPart("sellerDTO") String sellerDTO) throws IOException {
 
         log.info("판매자 입점신청 시작");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        StoreSellerDTO dto = objectMapper.readValue(dtoJson, StoreSellerDTO.class);
+        StoreSellerDTO StoreSellerDTO = objectMapper.readValue(sellerDTO, StoreSellerDTO.class);
+        StoreSellerDTO.setStoreImgURL(file);
 
         // 유효성 검사
-        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, dto);
+        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, StoreSellerDTO);
 
         // 서비스를 이용해서 Seller 생성
-        StoreEntity createdSeller = sellerService.saveSellerInfo(file, user,
-            StoreSellerDTO.toEntity(dto));
 
+        StoreEntity createdSeller = sellerService.saveSellerInfo(user,StoreSellerDTO);
         log.info("셀러 권한 세팅 완료");
+
         sellerService.generateSellerRole(user, createdSeller);
 
         String newAddress = createdSeller.getStoreAddress();
