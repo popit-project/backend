@@ -11,6 +11,8 @@ import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.exception.KakaoAddressChange;
 import com.popit.popitproject.store.exception.StoreException;
 import com.popit.popitproject.store.model.SellerModeButton;
+import com.popit.popitproject.store.model.StoreSellerDTO;
+import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
@@ -18,6 +20,7 @@ import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.entity.UserEntity.Role;
 import com.popit.popitproject.user.repository.UserRepository;
 import java.io.IOException;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -40,31 +43,32 @@ public class StoreSellerService {
     private final S3Service s3Service;
     private final NewsRepository newsRepository;
     private final ReviewRepository reviewRepository;
+    private final StoreRepository storeRepository;
 
-    public StoreEntity saveSellerInfo(MultipartFile file, UserEntity user, StoreEntity store)
-        throws IOException {
+    public StoreEntity saveSellerInfo(UserEntity user, StoreSellerDTO StoreSellerDTO) throws IOException {
 
+        MultipartFile file = StoreSellerDTO.getStoreImgURL();
         String imageUrl = s3Service.uploadFile(file);
-        store.setStoreImage(imageUrl);
 
-        return sellerRepository.save(StoreEntity.builder()
-            .id(store.getId())
-            .storeName(store.getStoreName())
-            .storeImage(store.getStoreImage())
-            .storeType(store.getStoreType())
-            .storeAddress(store.getStoreAddress())
-            .openTime(store.getOpenTime())
-            .closeTime(store.getCloseTime())
-            .openDate(store.getOpenDate())
-            .closeDate(store.getCloseDate())
-            .businessLicenseNumber(store.getBusinessLicenseNumber())
+
+        StoreEntity storeEntity = StoreEntity.builder()
+            .storeName(StoreSellerDTO.getStoreName())
+            .storeImage(imageUrl)
+            .storeType(StoreType.valueOf(StoreSellerDTO.getStoreType()))
+            .storeAddress(StoreSellerDTO.getStoreAddress())
+            .openTime(StoreSellerDTO.getOpenTime())
+            .closeTime(StoreSellerDTO.getCloseTime())
+            .openDate(StoreSellerDTO.getOpenDate())
+            .closeDate(StoreSellerDTO.getCloseDate())
+            .businessLicenseNumber(StoreSellerDTO.getBusinessLicenseNumber())
             .user(user)
-            .x(store.getX())
-            .y(store.getY())
-            .build()
-        );
-    }
+            .x(StoreSellerDTO.getX())
+            .y(StoreSellerDTO.getY())
+            .updateTime(LocalTime.now())
+            .build();
 
+        return storeRepository.save(storeEntity);
+    }
     public void generateSellerRole(UserEntity user, StoreEntity store) {
         user.getRoles().add(Role.ROLE_SELLER);
         user.setSellerModeButton(SellerModeButton.BUTTON_DISPLAY_ON);

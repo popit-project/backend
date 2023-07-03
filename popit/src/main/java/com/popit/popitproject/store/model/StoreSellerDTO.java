@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class StoreSellerDTO {
 
     private String storeName;
 
-    private String storeImgURL;
+    private MultipartFile storeImgURL;
 
     private String storeType; // 사업 종류
 
@@ -42,6 +43,8 @@ public class StoreSellerDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate closeDate;
 
+    private LocalDate updateTime;
+
     private UserEntity user;
 
     @NotBlank
@@ -52,25 +55,25 @@ public class StoreSellerDTO {
     private Double y;
 
     // 유저 아이디가 따로 없는 이유는 스프링 시큐리티를 이용해 인증을 구현하여서 유저가 자기 아이디를 넘겨주지 않아도 인증이가능하다.
-    public static StoreEntity toEntity(final StoreSellerDTO dto) throws IOException {
-
-        String newAddress = dto.getStoreAddress();
-        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
-
-        return StoreEntity.builder()
-                .id(dto.getId())
-                .storeName(dto.getStoreName())
-                .storeImage(dto.getStoreImgURL())
-                .storeType(StoreType.valueOf(dto.getStoreType()))
-                .storeAddress(dto.getStoreAddress())
-                .openTime(dto.getOpenTime())
-                .closeTime(dto.getCloseTime())
-                .openDate(dto.getOpenDate())
-                .closeDate(dto.getCloseDate())
-                .businessLicenseNumber(dto.getBusinessLicenseNumber())
-                .x(change.getX())
-                .y(change.getY())
-                .user(dto.getUser())
-                .build();
-    }
+//    public static StoreEntity toEntity(final StoreSellerDTO dto) throws IOException {
+//
+//        String newAddress = dto.getStoreAddress();
+//        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+//
+//        return StoreEntity.builder()
+//                .id(dto.getId())
+//                .storeName(dto.getStoreName())
+//                .storeImage(dto.getStoreImgURL())
+//                .storeType(StoreType.valueOf(dto.getStoreType()))
+//                .storeAddress(dto.getStoreAddress())
+//                .openTime(dto.getOpenTime())
+//                .closeTime(dto.getCloseTime())
+//                .openDate(dto.getOpenDate())
+//                .closeDate(dto.getCloseDate())
+//                .businessLicenseNumber(dto.getBusinessLicenseNumber())
+//                .x(change.getX())
+//                .y(change.getY())
+//                .user(dto.getUser())
+//                .build();
+//    }
 }

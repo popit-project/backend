@@ -59,13 +59,15 @@ public class StoreEntity implements Serializable {
     @NotNull(message = "마감 시간은 필수 입력 항목입니다.")
     private LocalTime closeTime;
 
-    @FutureOrPresent(message = "현재 또는 이후 날짜만 입력할 수 있습니다.")
+    @FutureOrPresent(message = "오픈 시간은 현재 또는 이후 날짜만 입력할 수 있습니다.")
     @NotNull(message = "운영기간은 필수 입력 항목입니다.")
     private LocalDate openDate;
 
-    @FutureOrPresent(message = "현재 또는 이후 날짜만 입력할 수 있습니다.")
+    @FutureOrPresent(message = "운영 마감은 현재 또는 이후 날짜만 입력할 수 있습니다.")
     @NotNull(message = "운영 마감일은 필수 입력 항목입니다.")
     private LocalDate closeDate;
+
+    private LocalTime updateTime;
 
     @PrePersist
     private void prePersist() {
