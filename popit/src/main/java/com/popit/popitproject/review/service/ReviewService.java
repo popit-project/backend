@@ -62,7 +62,7 @@ public class ReviewService {
             ReviewReadDto reviewDto = new ReviewReadDto();
             reviewDto.setId(reviewEntity.getId());
             reviewDto.setComment(reviewEntity.getComment());
-            reviewDto.setEmail(String.valueOf(reviewEntity.getEmail().getUserId()));
+            reviewDto.setEmail(String.valueOf(reviewEntity.getEmail().getNickname()));
 
             reviewDtos.add(reviewDto);
         }
