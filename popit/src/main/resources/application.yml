@@ -44,8 +44,8 @@ cloud:
       auto: false
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 100MB
+      max-file-size: 50MB
+      max-request-size: 500MB
 kakao:
   restapi:
     key: KakaoAK cecd764535a3df2e33f0e29c79e78ba8
