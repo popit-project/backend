@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
         String token = parseBearerToken(request);
 
         if (token != null) {
@@ -59,9 +59,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 String userId = String.valueOf(jwtTokenService.getSellerIdFromToken(token));
 
-                // TODO : 변경 부분 기존 코드에서 사용자 권한에서 유저아이디를 가져와서 store 있다면 role_seller를 부여
                 UserEntity user = userRepository.findByUserId(userId);
-                    //.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                if (user == null) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("사용자를 찾을 수 없습니다.");
+                    return;
+                }
 
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 if (user.getStore() != null) {
@@ -70,11 +73,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userId, null, authorities
+                        userId, null, authorities
                 );
 
                 authentication.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request));
+                        new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authentication);
                 SecurityContextHolder.setContext(securityContext);
