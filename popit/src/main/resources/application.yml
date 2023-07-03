@@ -1,6 +1,10 @@
 server:
   port: 8082
 
+logging:
+  level:
+    root: trace
+
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -44,6 +48,7 @@ cloud:
       auto: false
   servlet:
     multipart:
+
       max-file-size: 50MB
       max-request-size: 500MB
 kakao:

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SellerStoreHomeResponse {
+
     private Long sellerId;
     private Long storeId;
     private String storeImage;
