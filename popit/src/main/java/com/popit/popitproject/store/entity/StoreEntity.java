@@ -113,18 +113,4 @@ public class StoreEntity implements Serializable {
             .storeName(mapMapping.getStoreName())
             .build();
     }
-
-    public int getReviewCount() {
-        if (comments == null) {
-            return 0;
-        }
-        return comments.size();
-    }
-    public int getLikeCount() {
-        if (likes == null) {
-            return 0;
-        }
-        return likes.size();
-    }
-
 }
