@@ -108,6 +108,7 @@ public class UserService {
         userDTO.setPhone(userEntity.getPhone());
         userDTO.setNickname(userEntity.getNickname());
         userDTO.setSellerModeButton(userEntity.getSellerModeButton());
+        userDTO.setSellerId(userEntity.getSellerId());
         return userDTO;
     }
 

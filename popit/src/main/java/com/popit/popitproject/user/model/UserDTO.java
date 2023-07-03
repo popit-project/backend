@@ -14,4 +14,5 @@ public class UserDTO {
     private String phone;
     private String nickname;
     private SellerModeButton sellerModeButton;
+    private Long sellerId;
 }
