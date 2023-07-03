@@ -1,7 +1,9 @@
 package com.popit.popitproject.review.controller;
 
+import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.review.model.ReviewDto;
 import com.popit.popitproject.review.model.ReviewReadDto;
+import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.review.service.ReviewService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +18,16 @@ import java.util.List;
 @RequestMapping("/api/review")
 public class ReviewController {
     private final ReviewService reviewService;
+    private final ReviewRepository reviewRepository;
 
     @ApiOperation(
             value = "리뷰 작성"
             , notes = "스토어 ID로 들어가 리뷰 내용과 Email를 저장합니다.")
     @PostMapping("/write/{storeId}")
     public ResponseEntity<String> createComment(@PathVariable("storeId") Long storeId, @AuthenticationPrincipal String email,@RequestBody ReviewDto reviewDto) {
+
         reviewService.createComment(storeId,email,reviewDto);
-        return ResponseEntity.ok("review write success!");
+        return ResponseEntity.ok("리뷰 작성 완료!");
     }
 
     @ApiOperation(
@@ -48,7 +52,7 @@ public class ReviewController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteReview(@PathVariable("id") Long id, @AuthenticationPrincipal String email) {
         reviewService.deleteReview(id, email);
-        return ResponseEntity.ok("Review delete !!");
+        return ResponseEntity.ok("리뷰 삭제 완료 !!");
     }
 
     @ApiOperation(
@@ -57,7 +61,7 @@ public class ReviewController {
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateReview(@PathVariable("id") Long id, @AuthenticationPrincipal String email,@RequestBody ReviewDto reviewDto) {
         reviewService.updateReview(id, email,reviewDto);
-        return ResponseEntity.ok("Review update !!!");
+        return ResponseEntity.ok("리뷰 수정완료!");
     }
 
 }

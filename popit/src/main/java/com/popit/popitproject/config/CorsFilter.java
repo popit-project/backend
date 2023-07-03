@@ -1,5 +1,6 @@
 package com.popit.popitproject.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.io.IOException;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Configuration
 public class CorsFilter implements Filter {
 
     @Override

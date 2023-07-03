@@ -166,54 +166,6 @@ public class StoreSellerController {
         }
     }
 
-//    @ApiOperation(
-//            value = "판매자 입점 정보 수정"
-//            , notes = "가게 입점 정보를 수정합니다.")
-//    @PutMapping(path = "/seller/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
-////        @RequestPart(name = "file") MultipartFile file,
-//        @RequestPart(name = "updatedStoreDTO") String dtoJson) throws IOException {
-//
-//        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-//        UpdateStoreSellerDTO updatedStore = objectMapper.readValue(dtoJson, UpdateStoreSellerDTO.class);
-//
-//        // 토큰에서 가져온 사용자 정보
-//        UserEntity user = userRepository.findByUserId(userId);
-//
-//        StoreEntity storeInfo = storeRepository.findByUser(user)
-//                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
-//
-//        String newAddress = updatedStore.getStoreAddress();
-//        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
-//
-//        // 수정된 정보로 업데이트
-//        storeInfo.setStoreAddress(updatedStore.getStoreAddress());
-//        storeInfo.setOpenTime(updatedStore.getOpenTime());
-//        storeInfo.setCloseTime(updatedStore.getCloseTime());
-//        storeInfo.setOpenDate(updatedStore.getOpenDate());
-//        storeInfo.setCloseDate(updatedStore.getCloseDate());
-//
-//        storeInfo.setX(change.getX());
-//        storeInfo.setY(change.getY());
-//
-//        StoreEntity updatedStoreInfo = storeRepository.save(storeInfo);
-//
-//        SellerResponse sellerResponse = SellerResponse.builder()
-//                .id(updatedStoreInfo.getId())
-//                .storeName(updatedStoreInfo.getStoreName())
-//                .storeImage(updatedStoreInfo.getStoreImage())
-//                .storeType(String.valueOf(updatedStoreInfo.getStoreType()))
-//                .storeAddress(updatedStoreInfo.getStoreAddress())
-//                .openTime(updatedStoreInfo.getOpenTime())
-//                .closeTime(updatedStoreInfo.getCloseTime())
-//                .openDate(updatedStoreInfo.getOpenDate())
-//                .closeDate(updatedStoreInfo.getCloseDate())
-//                .businessLicenseNumber(updatedStoreInfo.getBusinessLicenseNumber())
-//                .build();
-//
-//        return ResponseEntity.ok().body(sellerResponse);
-//    }
-
 
     @ApiOperation(
         value = "판매자 입점 정보 수정",

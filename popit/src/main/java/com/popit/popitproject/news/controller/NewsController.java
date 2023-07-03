@@ -1,5 +1,6 @@
 package com.popit.popitproject.news.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.popit.popitproject.common.ResponseDTO;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
@@ -46,21 +47,26 @@ public class NewsController {
 
     @ApiOperation(
         value = "소식 등록",
-        notes = "소식 작성을 하고 저장/등록합니다.")
+        notes = "소식 작성을 하고 저장/등록합니다."
+    )
     @PostMapping(path = "/seller/news", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDTO<NewsDTO>> createNews(
         @AuthenticationPrincipal String userId,
         @RequestPart("file") MultipartFile file,
-        @RequestPart("dto") NewsDTO dto) throws IOException {
+        @RequestPart("dto") String dtoJson
+    ) throws IOException {
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            NewsDTO dto = objectMapper.readValue(dtoJson, NewsDTO.class);
+
             UserEntity user = newsService.getUserById(userId);
             StoreEntity store = sellerRepository.findById(user.getStore().getId())
                 .orElseThrow();
 
             NewsEntity entity = newsService.convertToEntity(dto);
             entity.setStoreName(store.getStoreName());
-            entity.setCity(store.getStoreAddress()); // 동만 나오게
+            entity.setCity(store.getStoreAddress());
             entity.setCreateTime(LocalDateTime.now());
             entity.setSeller(user.getStore());
 
