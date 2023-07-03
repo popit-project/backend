@@ -50,7 +50,7 @@ public class StoreEntity implements Serializable {
     private StoreType storeType;
 
     @Column(name = "store_address")
-    @NotNull(message = "가게 주소는 필수 입력 항목입니다.")
+    @NotBlank(message = "가게 주소는 필수 입력 항목입니다.")
     private String storeAddress;
 
     @NotNull(message = "오픈 시간은 필수 입력 항목입니다.")
@@ -93,7 +93,7 @@ public class StoreEntity implements Serializable {
     private List<NewsEntity> news;
 
     // map 위경도
-    @Column(name = "x")
+    @Column(name = "x", nullable = true)
     private Double x;
 
     @Column(name = "y")

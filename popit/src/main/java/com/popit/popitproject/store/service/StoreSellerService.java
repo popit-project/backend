@@ -1,11 +1,15 @@
 package com.popit.popitproject.store.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.popit.popitproject.Item.service.S3Service;
 import com.popit.popitproject.news.entity.NewsEntity;
+import com.popit.popitproject.news.model.NewsDTO;
 import com.popit.popitproject.news.repository.NewsRepository;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
+import com.popit.popitproject.store.exception.KakaoAddressChange;
 import com.popit.popitproject.store.model.SellerModeButton;
+import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.user.entity.UserEntity;
@@ -89,6 +93,24 @@ public class StoreSellerService {
         sellerRepository.delete(store);
     }
 
-// 운영 기간이 지나면 DELETE
+    @Transactional
+    public StoreEntity updateStore(UpdateStoreSellerDTO updateStoreSellerDTO, StoreEntity storeInfo) throws IOException {
+
+        String newAddress = updateStoreSellerDTO.getStoreAddress();
+        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+
+
+        // 수정된 정보로 업데이트
+        storeInfo.setStoreAddress(updateStoreSellerDTO.getStoreAddress());
+        storeInfo.setOpenTime(updateStoreSellerDTO.getOpenTime());
+        storeInfo.setCloseTime(updateStoreSellerDTO.getCloseTime());
+        storeInfo.setOpenDate(updateStoreSellerDTO.getOpenDate());
+        storeInfo.setCloseDate(updateStoreSellerDTO.getCloseDate());
+
+        storeInfo.setX(change.getX());
+        storeInfo.setY(change.getY());
+
+        return sellerRepository.save(storeInfo);
+    }
 
 }
