@@ -9,6 +9,7 @@ import com.popit.popitproject.store.exception.storeSeller.StoreSellerValidate;
 
 import com.popit.popitproject.store.model.SellerResponse;
 import com.popit.popitproject.store.model.SellerStoreHomeResponse;
+import com.popit.popitproject.store.model.SellerUpdateResponse;
 import com.popit.popitproject.store.model.StoreSellerDTO;
 
 import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
@@ -19,7 +20,7 @@ import com.popit.popitproject.user.repository.UserRepository;
 import io.swagger.annotations.ApiOperation;
 
 import java.io.IOException;
-;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,7 @@ public class StoreSellerController {
     private final StoreSellerService sellerService;
     private final StoreSellerRepository storeRepository;
     private final StoreSellerValidate storeSellerValidate;
-    private final ObjectMapper objectMapper;
+
 
     @ApiOperation(
         value = "판매자 입점신청"
@@ -93,65 +94,65 @@ public class StoreSellerController {
     }
 
     @ApiOperation(
-            value = "스토어 유저용 프로필 홈"
-            , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
+        value = "스토어 유저용 프로필 홈"
+        , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
     @GetMapping("/store/{storeId}/storeHome")
     public ResponseEntity<?> userStoreInfo(@PathVariable("storeId") Long storeId) {
 
         StoreEntity store = storeRepository.findById(storeId).orElseThrow(
-                () -> new RuntimeException("매장을 찾을 수 없습니다.")
+            () -> new RuntimeException("매장을 찾을 수 없습니다.")
         );
 
         SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
-                .storeId(store.getId())
-                .sellerId(store.getUser().getStore().getId())
-                .storeImage(store.getStoreImage())
-                .storeName(store.getStoreName())
-                .storeType(store.getStoreType().getDisplayName())
-                .storeAddress(store.getStoreAddress())
-                .openTime(store.getOpenTime())
-                .closeTime(store.getCloseTime())
-                .openDate(store.getOpenDate())
-                .closeDate(store.getCloseDate())
-                .build();
+            .storeId(store.getId())
+            .sellerId(store.getUser().getStore().getId())
+            .storeImage(store.getStoreImage())
+            .storeName(store.getStoreName())
+            .storeType(store.getStoreType().getDisplayName())
+            .storeAddress(store.getStoreAddress())
+            .openTime(store.getOpenTime())
+            .closeTime(store.getCloseTime())
+            .openDate(store.getOpenDate())
+            .closeDate(store.getCloseDate())
+            .build();
 
         return ResponseEntity.ok().body(sellerResponse);
 
     }
 
     @ApiOperation(
-            value = "스토어 셀러용 프로필 홈"
-            , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
+        value = "스토어 셀러용 프로필 홈"
+        , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
     @GetMapping("/seller/{sellerId}/storeHome")
     public ResponseEntity<?> sellerStoreInfo(@AuthenticationPrincipal String userId,
-                                             @PathVariable("sellerId") Long sellerId) {
+        @PathVariable("sellerId") Long sellerId) {
 
         UserEntity user = userRepository.findByUserId(userId);
         StoreEntity store = storeRepository.findById(user.getStore().getId()).orElseThrow(
-                () -> new RuntimeException("매장을 찾을 수 없습니다.")
+            () -> new RuntimeException("매장을 찾을 수 없습니다.")
         );
 
         SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
-                .sellerId(sellerId)
-                .storeId(store.getId())
-                .sellerId(store.getUser().getStore().getId())
-                .storeImage(store.getStoreImage())
-                .storeName(store.getStoreName())
-                .storeType(store.getStoreType().getDisplayName())
-                .storeAddress(store.getStoreAddress())
-                .openTime(store.getOpenTime())
-                .closeTime(store.getCloseTime())
-                .openDate(store.getOpenDate())
-                .closeDate(store.getCloseDate())
-                .build();
+            .sellerId(sellerId)
+            .storeId(store.getId())
+            .sellerId(store.getUser().getStore().getId())
+            .storeImage(store.getStoreImage())
+            .storeName(store.getStoreName())
+            .storeType(store.getStoreType().getDisplayName())
+            .storeAddress(store.getStoreAddress())
+            .openTime(store.getOpenTime())
+            .closeTime(store.getCloseTime())
+            .openDate(store.getOpenDate())
+            .closeDate(store.getCloseDate())
+            .build();
 
         return ResponseEntity.ok().body(sellerResponse);
 
     }
 
     @ApiOperation(
-            value = "가게 삭제"
-            , notes = "가게를 삭제하고, 그 안의 리뷰, 소식도 함께 삭제합니다.")
+        value = "가게 삭제"
+        , notes = "가게를 삭제하고, 그 안의 리뷰, 소식도 함께 삭제합니다.")
     @DeleteMapping("/stores/{storeId}")
     public ResponseEntity<String> deleteStore(@PathVariable Long storeId) {
         try {
@@ -161,57 +162,85 @@ public class StoreSellerController {
             return ResponseEntity.ok("Store deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to delete store: " + e.getMessage());
+                .body("Failed to delete store: " + e.getMessage());
         }
     }
 
-    @ApiOperation(
-            value = "판매자 입점 정보 수정"
-            , notes = "가게 입점 정보를 수정합니다.")
-    @PutMapping(path = "/seller/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
-//        @RequestPart(name = "file") MultipartFile file,
-        @RequestPart(name = "updatedStoreDTO") String dtoJson) throws IOException {
+//    @ApiOperation(
+//            value = "판매자 입점 정보 수정"
+//            , notes = "가게 입점 정보를 수정합니다.")
+//    @PutMapping(path = "/seller/sellerEnter", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
+////        @RequestPart(name = "file") MultipartFile file,
+//        @RequestPart(name = "updatedStoreDTO") String dtoJson) throws IOException {
+//
+//        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+//        UpdateStoreSellerDTO updatedStore = objectMapper.readValue(dtoJson, UpdateStoreSellerDTO.class);
+//
+//        // 토큰에서 가져온 사용자 정보
+//        UserEntity user = userRepository.findByUserId(userId);
+//
+//        StoreEntity storeInfo = storeRepository.findByUser(user)
+//                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+//
+//        String newAddress = updatedStore.getStoreAddress();
+//        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+//
+//        // 수정된 정보로 업데이트
+//        storeInfo.setStoreAddress(updatedStore.getStoreAddress());
+//        storeInfo.setOpenTime(updatedStore.getOpenTime());
+//        storeInfo.setCloseTime(updatedStore.getCloseTime());
+//        storeInfo.setOpenDate(updatedStore.getOpenDate());
+//        storeInfo.setCloseDate(updatedStore.getCloseDate());
+//
+//        storeInfo.setX(change.getX());
+//        storeInfo.setY(change.getY());
+//
+//        StoreEntity updatedStoreInfo = storeRepository.save(storeInfo);
+//
+//        SellerResponse sellerResponse = SellerResponse.builder()
+//                .id(updatedStoreInfo.getId())
+//                .storeName(updatedStoreInfo.getStoreName())
+//                .storeImage(updatedStoreInfo.getStoreImage())
+//                .storeType(String.valueOf(updatedStoreInfo.getStoreType()))
+//                .storeAddress(updatedStoreInfo.getStoreAddress())
+//                .openTime(updatedStoreInfo.getOpenTime())
+//                .closeTime(updatedStoreInfo.getCloseTime())
+//                .openDate(updatedStoreInfo.getOpenDate())
+//                .closeDate(updatedStoreInfo.getCloseDate())
+//                .businessLicenseNumber(updatedStoreInfo.getBusinessLicenseNumber())
+//                .build();
+//
+//        return ResponseEntity.ok().body(sellerResponse);
+//    }
 
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        UpdateStoreSellerDTO updatedStore = objectMapper.readValue(dtoJson, UpdateStoreSellerDTO.class);
+
+    @ApiOperation(
+        value = "판매자 입점 정보 수정",
+        notes = "가게 입점 정보를 수정합니다.")
+    @PutMapping(path = "/seller/sellerEnter")
+    public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
+        @RequestBody UpdateStoreSellerDTO updateStoreSellerDTO) throws IOException {
 
         // 토큰에서 가져온 사용자 정보
         UserEntity user = userRepository.findByUserId(userId);
 
-        StoreEntity storeInfo = storeRepository.findByUser(user)
-                .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+        StoreEntity originStoreInfo = storeRepository.findByUser(user)
+            .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
 
-        String newAddress = updatedStore.getStoreAddress();
-        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+        // 스토어 정보 업데이트
+        StoreEntity updatedStoreInfo = sellerService.updateStore(updateStoreSellerDTO, originStoreInfo);
 
-        // 수정된 정보로 업데이트
-        storeInfo.setStoreAddress(updatedStore.getStoreAddress());
-        storeInfo.setOpenTime(updatedStore.getOpenTime());
-        storeInfo.setCloseTime(updatedStore.getCloseTime());
-        storeInfo.setOpenDate(updatedStore.getOpenDate());
-        storeInfo.setCloseDate(updatedStore.getCloseDate());
+        SellerUpdateResponse sellerUpdateResponse = SellerUpdateResponse.builder()
+            .storeId(originStoreInfo.getId())
+            .storeAddress(updatedStoreInfo.getStoreAddress())
+            .openTime(updatedStoreInfo.getOpenTime())
+            .closeTime(updatedStoreInfo.getCloseTime())
+            .openDate(updatedStoreInfo.getOpenDate())
+            .closeDate(updatedStoreInfo.getCloseDate())
+            .build();
 
-        storeInfo.setX(change.getX());
-        storeInfo.setY(change.getY());
-
-        StoreEntity updatedStoreInfo = storeRepository.save(storeInfo);
-
-        SellerResponse sellerResponse = SellerResponse.builder()
-                .id(updatedStoreInfo.getId())
-                .storeName(updatedStoreInfo.getStoreName())
-                .storeImage(updatedStoreInfo.getStoreImage())
-                .storeType(String.valueOf(updatedStoreInfo.getStoreType()))
-                .storeAddress(updatedStoreInfo.getStoreAddress())
-                .openTime(updatedStoreInfo.getOpenTime())
-                .closeTime(updatedStoreInfo.getCloseTime())
-                .openDate(updatedStoreInfo.getOpenDate())
-                .closeDate(updatedStoreInfo.getCloseDate())
-                .businessLicenseNumber(updatedStoreInfo.getBusinessLicenseNumber())
-                .build();
-
-        return ResponseEntity.ok().body(sellerResponse);
+        return ResponseEntity.ok().body(sellerUpdateResponse);
     }
-
 
 }
