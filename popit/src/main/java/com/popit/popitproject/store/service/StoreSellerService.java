@@ -5,9 +5,11 @@ import com.popit.popitproject.Item.service.S3Service;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.news.model.NewsDTO;
 import com.popit.popitproject.news.repository.NewsRepository;
+import com.popit.popitproject.review.exception.ReviewException;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.exception.KakaoAddressChange;
+import com.popit.popitproject.store.exception.StoreException;
 import com.popit.popitproject.store.model.SellerModeButton;
 import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
 import com.popit.popitproject.store.repository.StoreRepository;
@@ -98,6 +100,9 @@ public class StoreSellerService {
 
         String newAddress = updateStoreSellerDTO.getStoreAddress();
         StoreEntity change = KakaoAddressChange.addressChange(newAddress);
+        if(change == null){
+            throw new RuntimeException("주소가 잘못 입력되었습니다.");
+        }
 
 
         // 수정된 정보로 업데이트
