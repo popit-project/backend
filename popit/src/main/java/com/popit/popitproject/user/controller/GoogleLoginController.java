@@ -65,7 +65,7 @@ public class GoogleLoginController {
             userDTO = userService.registerGoogleUser(email);
         }
 
-        Map<String, Object> tokenData = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail());
+        Map<String, Object> tokenData = jwtTokenService.generateUserToken(userDTO.getUserId(), userDTO.getEmail(), userDTO.getSellerId());
         userService.updateLastTokenUsed(userDTO.getEmail());
         return ResponseEntity.ok(tokenData);
     }

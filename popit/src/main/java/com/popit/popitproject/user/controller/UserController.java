@@ -56,6 +56,22 @@ public class UserController {
         }
     }
 
+//    @ApiOperation(
+//            value = "로그인 기능"
+//            , notes = "로그인 시 토큰 발행")
+//    @PostMapping("/login")
+//    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+//        boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
+//        if (isLoggedIn) {
+//            UserDTO user = userService.getUserInfo(loginRequest.getUserId());
+//            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
+//            userService.updateLastTokenUsed(user.getEmail());
+//            return ResponseEntity.ok(tokenData);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인에 실패하였습니다. 아이디 또는 비밀번호를 확인해주세요.");
+//        }
+//    }
+
     @ApiOperation(
             value = "로그인 기능"
             , notes = "로그인 시 토큰 발행")
@@ -64,7 +80,7 @@ public class UserController {
         boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
         if (isLoggedIn) {
             UserDTO user = userService.getUserInfo(loginRequest.getUserId());
-            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail());
+            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail(), user.getSellerId());
             userService.updateLastTokenUsed(user.getEmail());
             return ResponseEntity.ok(tokenData);
         } else {
@@ -74,7 +90,7 @@ public class UserController {
 
     @ApiOperation(
             value = "내 정보 보기"
-            , notes = "로그인한 User 정보 보")
+            , notes = "로그인한 User 정보 보기")
     @GetMapping("/info")
     public UserDTO getUserInfo(@RequestParam String userId) {
         return userService.getUserInfo(userId);

@@ -201,4 +201,32 @@ public class StoreSellerController {
         return ResponseEntity.ok().body(sellerUpdateResponse);
     }
 
+    @ApiOperation(
+            value = "유저 id로 스토어 받아오기"
+            , notes = "입점 신청 후 생성된 가게의 정보를 줍니다.")
+    @GetMapping("/seller/storeHome")
+    public ResponseEntity<?> storeInfoByUser(@AuthenticationPrincipal String userId) {
+
+        UserEntity user = userRepository.findByUserId(userId);
+        StoreEntity store = storeRepository.findByUser(user).orElseThrow(
+                () -> new RuntimeException("매장을 찾을 수 없습니다.")
+        );
+
+        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
+                .sellerId(store.getId())
+                .storeId(store.getId())
+                .sellerId(store.getUser().getStore().getId())
+                .storeImage(store.getStoreImage())
+                .storeName(store.getStoreName())
+                .storeType(store.getStoreType().getDisplayName())
+                .storeAddress(store.getStoreAddress())
+                .openTime(store.getOpenTime())
+                .closeTime(store.getCloseTime())
+                .openDate(store.getOpenDate())
+                .closeDate(store.getCloseDate())
+                .build();
+
+        return ResponseEntity.ok().body(sellerResponse);
+
+    }
 }
