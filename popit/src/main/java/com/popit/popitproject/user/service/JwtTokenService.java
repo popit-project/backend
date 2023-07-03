@@ -10,8 +10,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import java.util.Base64;
 
 import javax.crypto.SecretKey;
+import javax.xml.bind.DatatypeConverter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -67,9 +69,12 @@ public class JwtTokenService {
         ZonedDateTime expiryDateUtc = expiryDate.toInstant().atZone(ZoneId.of("UTC"));
         ZonedDateTime expiryDateKst = expiryDateUtc.withZoneSameInstant(ZoneId.of("Asia/Seoul"));
 
+        String sellerIdString = sellerId != null ? sellerId.toString() : null;
+
         Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("token", token);
         tokenData.put("expiresIn", expiryDateKst.toString());
+        tokenData.put("sellerId", sellerIdString);
 
         return tokenData;
     }
@@ -103,11 +108,13 @@ public class JwtTokenService {
 //        return claims.getBody().getSubject();
 //    }
 
+
+
     public String getSellerIdFromToken(String token) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
-        return claims.getBody().get("sellerId", String.class);
+        String sellerId = claims.getBody().get("sellerId", String.class);
+        return "null".equals(sellerId) ? null : sellerId;
     }
-
 
     public Authentication getAuthentication(String token) {
         String userId = getUserIdFromToken(token);
