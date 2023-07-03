@@ -57,7 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                String userId = String.valueOf(jwtTokenService.getSellerIdFromToken(token));
+                String sellerId = jwtTokenService.getSellerIdFromToken(token);
+                String userId = jwtTokenService.getUserIdFromToken(token);
 
                 UserEntity user = userRepository.findByUserId(userId);
                 if (user == null) {
@@ -81,6 +82,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authentication);
                 SecurityContextHolder.setContext(securityContext);
+
+                response.addHeader("X-UserId", userId);
+                response.addHeader("X-SellerId", sellerId);
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("잘못된 토큰입니다.");

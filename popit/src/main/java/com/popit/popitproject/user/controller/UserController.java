@@ -156,16 +156,23 @@ public class UserController {
             , notes = "토큰으로 ID, Email, 토큰 유지시간 확인")
     @GetMapping("/tokenInfo")
     public ResponseEntity<?> getTokenInfo(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        if (jwtTokenService.validateToken(token)) {
-            String userId = jwtTokenService.getUserIdFromToken(token);
-            String email = jwtTokenService.getEmailFromToken(token);
-            Map<String, String> tokenData = new HashMap<>();
-            tokenData.put("userId", userId);
-            tokenData.put("email", email);
-            return ResponseEntity.ok(tokenData);
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            if (jwtTokenService.validateToken(token)) {
+                String userId = jwtTokenService.getUserIdFromToken(token);
+                String email = jwtTokenService.getEmailFromToken(token);
+                String sellerId = jwtTokenService.getSellerIdFromToken(token);
+                Map<String, String> tokenData = new HashMap<>();
+                tokenData.put("userId", userId);
+                tokenData.put("email", email);
+                tokenData.put("sellerId", sellerId);
+                return ResponseEntity.ok(tokenData);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 필요합니다.");
         }
     }
 
