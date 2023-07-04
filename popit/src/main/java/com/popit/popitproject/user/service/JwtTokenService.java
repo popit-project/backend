@@ -1,10 +1,13 @@
 package com.popit.popitproject.user.service;
 
+import com.popit.popitproject.user.entity.UserEntity;
+import com.popit.popitproject.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,13 +25,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+
 public class JwtTokenService {
+    UserRepository userRepository;
 
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
 
     private static final long EXPIRATION_TIME = 30 * 60 * 1000; // 30분
     SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
+    public JwtTokenService() {
+    }
 
 //    public Map<String, Object> generateUserToken(String userId, String email) {
 //        Date now = new Date();
@@ -52,7 +60,7 @@ public class JwtTokenService {
 //        return tokenData;
 //    }
 
-    public Map<String, Object> generateUserToken(String userId, String email, Long sellerId) {
+    public Map<String, Object> generateUserToken(String userId, String email, Long sellerId,String nickname) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
@@ -61,6 +69,7 @@ public class JwtTokenService {
                 .claim("email", email)
                 .claim("sellerId", sellerId != null ? sellerId.toString() : null)
                 .claim("userId", userId)
+                .claim("nickname",nickname)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(Keys.hmacShaKeyFor(key.getEncoded()), SignatureAlgorithm.HS512)
@@ -71,10 +80,13 @@ public class JwtTokenService {
 
         String sellerIdString = sellerId != null ? sellerId.toString() : null;
 
+
+
         Map<String, Object> tokenData = new HashMap<>();
         tokenData.put("token", token);
         tokenData.put("expiresIn", expiryDateKst.toString());
         tokenData.put("sellerId", sellerIdString);
+        tokenData.put("nickname",nickname);
 
         return tokenData;
     }

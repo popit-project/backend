@@ -80,7 +80,7 @@ public class UserController {
         boolean isLoggedIn = userService.login(loginRequest.getUserId(), loginRequest.getPassword());
         if (isLoggedIn) {
             UserDTO user = userService.getUserInfo(loginRequest.getUserId());
-            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail(), user.getSellerId());
+            Map<String, Object> tokenData = jwtTokenService.generateUserToken(user.getUserId(), user.getEmail(), user.getSellerId(),user.getNickname());
             userService.updateLastTokenUsed(user.getEmail());
             return ResponseEntity.ok(tokenData);
         } else {
