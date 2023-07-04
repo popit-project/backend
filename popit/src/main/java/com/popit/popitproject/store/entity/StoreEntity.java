@@ -67,14 +67,13 @@ public class StoreEntity implements Serializable {
     @NotNull(message = "운영 마감일은 필수 입력 항목입니다.")
     private LocalDate closeDate;
 
-    private LocalTime updateTime;
-
     @PrePersist
     private void prePersist() {
         if (openDate != null && closeDate != null && closeDate.isBefore(openDate)) {
             throw new StoreRegisteredException("Invalid close date");
         }
     }
+
     @Column
     private Timestamp updatedAt;
 
@@ -115,4 +114,5 @@ public class StoreEntity implements Serializable {
             .storeName(mapMapping.getStoreName())
             .build();
     }
+
 }

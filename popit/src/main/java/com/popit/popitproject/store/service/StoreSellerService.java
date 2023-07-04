@@ -50,6 +50,8 @@ public class StoreSellerService {
         MultipartFile file = StoreSellerDTO.getStoreImgURL();
         String imageUrl = s3Service.uploadFile(file);
 
+        String newAddress = StoreSellerDTO.getStoreAddress();
+        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
 
         StoreEntity storeEntity = StoreEntity.builder()
             .storeName(StoreSellerDTO.getStoreName())
@@ -62,9 +64,8 @@ public class StoreSellerService {
             .closeDate(StoreSellerDTO.getCloseDate())
             .businessLicenseNumber(StoreSellerDTO.getBusinessLicenseNumber())
             .user(user)
-            .x(StoreSellerDTO.getX())
-            .y(StoreSellerDTO.getY())
-            .updateTime(LocalTime.now())
+            .x(change.getX())
+            .y(change.getY())
             .build();
 
         return storeRepository.save(storeEntity);
