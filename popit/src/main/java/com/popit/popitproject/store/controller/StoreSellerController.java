@@ -96,7 +96,7 @@ public class StoreSellerController {
             .build();
 
         log.info("판매자 입점신청 완료");
-        return ResponseEntity.ok().body(sellerResponse);
+        return ResponseEntity.ok().body(createdSeller.getId());
     }
 
     @ApiOperation(
