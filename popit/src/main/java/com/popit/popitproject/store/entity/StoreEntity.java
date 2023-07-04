@@ -1,5 +1,6 @@
 package com.popit.popitproject.store.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.store.exception.storeSeller.StoreRegisteredException;
@@ -54,9 +55,11 @@ public class StoreEntity implements Serializable {
     private String storeAddress;
 
     @NotNull(message = "오픈 시간은 필수 입력 항목입니다.")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime openTime;
 
     @NotNull(message = "마감 시간은 필수 입력 항목입니다.")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime closeTime;
 
     @FutureOrPresent(message = "오픈 시간은 현재 또는 이후 날짜만 입력할 수 있습니다.")
