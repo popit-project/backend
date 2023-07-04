@@ -45,12 +45,12 @@ public class ItemController {
       @RequestPart("file") MultipartFile file,
       HttpServletRequest request) {
     try {
-      String token = request.getHeader("Authorization").substring(7); // Extract token
+      String token = request.getHeader("Authorization").substring(7);
       if (!jwtTokenService.validateToken(token)) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 토큰입니다.");
       }
 
-      String userId = jwtTokenService.getSellerIdFromToken(token);
+      String userId = jwtTokenService.getUserIdFromToken(token);
 
       ObjectMapper objectMapper = new ObjectMapper();
       ItemInput itemInput = objectMapper.readValue(itemInputStr, ItemInput.class);
