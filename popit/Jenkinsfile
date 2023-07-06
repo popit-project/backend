@@ -1,0 +1,11 @@
+pipeline {
+    agent any
+    stages {
+        stage('Deploy') {
+            steps {
+                sh 'docker pull aiden0312/popit-app:latest'
+                sh 'docker run -d -p 8082:8082 --name popit-app aiden0312/popit-app:latest'
+            }
+        }
+    }
+}
