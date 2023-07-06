@@ -1,6 +1,21 @@
 pipeline {
     agent any
     stages {
+        stage('Git Checkout') {
+            steps {
+                git url: https://github.com/popit-project/backend.git, branch: 'master'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t aiden0312/popit-app:latest .'
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push aiden0312/popit-app:latest'
+            }
+        }
         stage('Deploy') {
             steps {
                 sh 'docker pull aiden0312/popit-app:latest'
