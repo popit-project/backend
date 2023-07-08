@@ -180,6 +180,9 @@ public class NewsController {
     }
 
     // 알림 전체 삭제
+    @ApiOperation(
+            value = "알림 삭제"
+    )
     @DeleteMapping("/seller/notifications")
     public ResponseEntity<?> deleteAllUserNotifications(
         @RequestHeader(value = "Authorization") String token) {
