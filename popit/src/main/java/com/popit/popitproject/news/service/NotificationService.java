@@ -31,7 +31,12 @@ public class NotificationService {
                 .collect(Collectors.toList());
         this.template.convertAndSendToUser(newNotification.getUser().getUserId(), "/topic/notifications/list", notificationDTOS);
     }
+
+    public void notifyUserCount(String userId, Long count) {
+        this.template.convertAndSendToUser(userId, "/topic/notifications/count", count);
+    }
 }
+
 
 //    private final SimpMessagingTemplate template;
 //

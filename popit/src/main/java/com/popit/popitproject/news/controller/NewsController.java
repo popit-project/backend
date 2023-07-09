@@ -154,10 +154,7 @@ public class NewsController {
         Long count = notificationRepository.countByUser(user);
 
         // WebSocket
-        NotificationEntity notification = new NotificationEntity();
-        notification.setUser(user);
-        notification.setMessage("알림 수: " + count);
-        notificationService.notifyUser(notification);
+        notificationService.notifyUserCount(userId, count);
 
         return ResponseEntity.ok(count);
     }
