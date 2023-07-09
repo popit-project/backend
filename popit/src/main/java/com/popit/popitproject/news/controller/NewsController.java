@@ -144,14 +144,20 @@ public class NewsController {
     }
 
     // 알림 Count
-    @GetMapping("/seller/notifications/count")
+    @PostMapping("/seller/notifications/count")
     public ResponseEntity<?> getNotificationCount(
-        @RequestHeader(value = "Authorization") String token) {
+            @RequestHeader(value = "Authorization") String token) {
         token = token.replace("Bearer ", "");
         String userId = jwtTokenService.getUserIdFromToken(token);
         UserEntity user = userRepository.findByUserId(userId);
 
         Long count = notificationRepository.countByUser(user);
+
+        // WebSocket
+        NotificationEntity notification = new NotificationEntity();
+        notification.setUser(user);
+        notification.setMessage("알림 수: " + count);
+        notificationService.notifyUser(notification);
 
         return ResponseEntity.ok(count);
     }
