@@ -33,6 +33,7 @@ public class NotificationService {
     }
 
     public void notifyUserCount(String userId, Long count) {
+        System.out.println("userId = " + userId + " count = " + count);
         this.template.convertAndSendToUser(userId, "/topic/notifications/count", count);
     }
 }
