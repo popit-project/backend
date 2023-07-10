@@ -34,7 +34,7 @@ public class GoogleLoginController {
     @RequestMapping(value = "/api/login/google", method = RequestMethod.POST)
     public String loginUrlGoogle() {
         String reqUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + googleClientId
-                + "&redirect_uri=http://localhost:5173/&response_type=code&scope=email%20profile%20openid&access_type=offline";
+                + "&redirect_uri=https://popit.vercel.app&response_type=code&scope=email%20profile%20openid&access_type=offline";
         return reqUrl;
     }
 
@@ -46,7 +46,7 @@ public class GoogleLoginController {
                 .clientId(googleClientId)
                 .clientSecret(googleClientPw)
                 .code(authCode)
-                .redirectUri("http://localhost:5173/")
+                .redirectUri("https://popit.vercel.app")
                 .grantType("authorization_code").build();
 
         ResponseEntity<GoogleResponse> resultEntity = restTemplate.postForEntity("https://oauth2.googleapis.com/token",
