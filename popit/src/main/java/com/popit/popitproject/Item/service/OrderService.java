@@ -24,16 +24,14 @@ public class OrderService {
 
   @Transactional
   public void placeOrders(List<OrderItemDTO> orderItems, String orderUserId) {
-
-
-    for (OrderItemDTO orderItem : orderItems) {
+    for (OrderItemDTO orderItem: orderItems) {
       Item item = itemRepository.findByItemNm(orderItem.getItemNm());
       if (item == null) {
-        throw new ItemNotFoundException("찾을수 없는 상품입니다.");
+        throw new ItemNotFoundException(orderItem.getItemNm() + "는 없는 상품입니다.");
       }
 
       if (item.getStockNumber() < orderItem.getQuantity()) {
-        throw new InsufficientStockException("재고를 확인해주세요");
+        throw new InsufficientStockException(orderItem.getItemNm() + "의 재고는 현재 : " + item.getStockNumber() + "개 입니다.");
       }
 
       OrderList order = OrderList.builder()
