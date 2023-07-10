@@ -38,7 +38,7 @@ public class OrderController {
     String orderUserId = jwtTokenService.getSellerIdFromToken(token);
     try {
       orderService.placeOrders(orderRequestDTO.getOrderItems(), orderUserId);
-      return ResponseEntity.ok("상품 구매가 완료되었습니다.");
+      return ResponseEntity.ok("상품 구매가 완료되었습니다");
     } catch (ItemNotFoundException e) {
       return ResponseEntity.badRequest().body(e.getMessage());
     } catch (InsufficientStockException e) {

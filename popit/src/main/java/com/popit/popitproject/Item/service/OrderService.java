@@ -31,7 +31,7 @@ public class OrderService {
       }
 
       if (item.getStockNumber() < orderItem.getQuantity()) {
-        throw new InsufficientStockException(orderItem.getItemNm() + "의 재고는 현재 : " + item.getStockNumber() + "개 입니다.");
+        throw new InsufficientStockException(orderItem.getItemNm() + "의 재고는 현재 : " + item.getStockNumber() + "개 입니다");
       }
 
       OrderList order = OrderList.builder()
