@@ -110,7 +110,7 @@ public class UserController {
     }
 
     @ApiOperation(
-            value = "PW 초기화"
+            value = "PW 초기화 설정"
             , notes = "가입 시 입력한 이메일로 임의에 PW를 만들어서 발송")
     @PostMapping("/reset-password")
     public String resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
