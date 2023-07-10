@@ -167,14 +167,17 @@ public class UserService {
     }
 
     public UserDTO registerGoogleUser(String email) {
+        UserEntity existingUser = userRepository.findByEmail(email);
+        if (existingUser != null) {
+            UserDTO existingUserDTO = new UserDTO();
+            existingUserDTO.setEmail(existingUser.getEmail());
+            existingUserDTO.setUserId(existingUser.getUserId());
+            return existingUserDTO;
+        }
+
         UserEntity newUser = new UserEntity();
         newUser.setEmail(email);
         newUser.getRoles().add(UserEntity.Role.ROLE_USER);
-
-        UserEntity existingEmail = userRepository.findByEmail(email);
-        if (existingEmail != null) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
-        }
 
         newUser.setUserId(generateRandomAlphanumericString(8)); // 임시 user ID 생성
         newUser.setPassword(generateRandomAlphanumericString(8)); // 임시 비밀번호 생성
@@ -189,6 +192,7 @@ public class UserService {
 
         return result;
     }
+
 
     public void updateLastTokenUsed(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
