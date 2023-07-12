@@ -41,8 +41,8 @@ public class BatchScheduler {
     }
 
     // 오픈, 종료 하루 전 알림
-    // @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
+    // @Scheduled(cron = "0 */5 * * * *")
     public void runOpeningOrClosingNotificationsJob() {
         Map<String, JobParameter> confMap = new HashMap<>();
         confMap.put("time", new JobParameter(System.currentTimeMillis()));
