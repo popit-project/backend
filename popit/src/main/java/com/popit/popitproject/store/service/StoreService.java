@@ -11,6 +11,7 @@ import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.store.repository.LikeRepository;
 import com.popit.popitproject.store.repository.MapMapping;
 import com.popit.popitproject.store.repository.StoreRepository;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +36,22 @@ public class StoreService {
     public List<StoreCountDTO> findMapAll(){
         List<MapMapping> stores = storeRepository.findAllBy();
         List<StoreCountDTO> mapMappings = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+
+
         for (MapMapping store : stores) {
             Long storeId = store.getId();
             List<ReviewEntity> reviewCount = reviewRepository.findByStoreId(storeId);
             List<LikeEntity> likeCount = likeRepository.findByStore(StoreEntity.from(store));
-            StoreCountDTO mapMapping = new StoreCountDTO(store.getId(), store.getStoreName(),store.getStoreImage(), store.getStoreType(),
-                    store.getStoreAddress(), store.getX(), store.getY(),  store.getOpenTime(),
+            LocalDate newOpenDate = store.getOpenDate().minusDays(3);
+
+            if (newOpenDate.isEqual(currentDate) || newOpenDate.isBefore(currentDate)) {
+                // newOpenDate is equal to or before currentDate
+                StoreCountDTO mapMapping = new StoreCountDTO(store.getId(), store.getStoreName(),store.getStoreImage(), store.getStoreType(),
+                    store.getStoreAddress(), store.getX(), store.getY(), store.getOpenTime(),
                     store.getCloseTime(), store.getOpenDate(), store.getCloseDate(), reviewCount.size(),likeCount.size());
-            mapMappings.add(mapMapping);
+                mapMappings.add(mapMapping);
+            }
         }
         return mapMappings;
     }

@@ -1,15 +1,10 @@
 package com.popit.popitproject.store.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.popit.popitproject.Item.service.S3Service;
-import com.popit.popitproject.news.entity.NewsEntity;
-import com.popit.popitproject.news.model.NewsDTO;
 import com.popit.popitproject.news.repository.NewsRepository;
-import com.popit.popitproject.review.exception.ReviewException;
 import com.popit.popitproject.review.repository.ReviewRepository;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.exception.KakaoAddressChange;
-import com.popit.popitproject.store.exception.StoreException;
 import com.popit.popitproject.store.model.SellerModeButton;
 import com.popit.popitproject.store.model.StoreSellerDTO;
 import com.popit.popitproject.store.model.StoreType;
@@ -20,7 +15,6 @@ import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.entity.UserEntity.Role;
 import com.popit.popitproject.user.repository.UserRepository;
 import java.io.IOException;
-import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
