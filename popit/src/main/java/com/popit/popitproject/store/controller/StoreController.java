@@ -101,7 +101,7 @@ public class StoreController {
             // WebSocket을 이용해 알림 전송
             NotificationEntity notification = new NotificationEntity();
             notification.setUser(user);
-            notification.setMessage(store.getStoreName() + "에 좋아요를 눌렀습니다.");
+            notification.setMessage(store.getStoreName() + "스토어에 좋아요를 눌렀습니다.");
 
             NotificationEntity savedNotification = notificationRepository.save(notification);
             notificationService.notifyUser(savedNotification);

@@ -71,9 +71,9 @@ public class NotificationService {
             notification.setUser(like.getUser());
             String message;
             if (store.getOpenDate().isEqual(LocalDate.now().plusDays(1))) {
-                message = store.getStoreName() + "가 내일 오픈합니다!";
+                message = store.getStoreName() + " 스토어가 내일 오픈합니다!";
             } else {
-                message = store.getStoreName() + "가 내일 마감합니다!";
+                message = store.getStoreName() + " 스토어가 내일 마감합니다!";
             }
             notification.setMessage(message);
             NotificationEntity savedNotification = notificationRepository.save(notification);
