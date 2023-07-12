@@ -34,18 +34,26 @@ public class StoreService {
     @Transactional
     public List<StoreCountDTO> findMapAll(){
         List<MapMapping> stores = storeRepository.findAllBy();
+
         List<StoreCountDTO> mapMappings = new ArrayList<>();
+
         for (MapMapping store : stores) {
+
             Long storeId = store.getId();
+
             List<ReviewEntity> reviewCount = reviewRepository.findByStoreId(storeId);
+
             List<LikeEntity> likeCount = likeRepository.findByStore(StoreEntity.from(store));
+
             StoreCountDTO mapMapping = new StoreCountDTO(store.getId(), store.getStoreName(),store.getStoreImage(), store.getStoreType(),
                     store.getStoreAddress(), store.getX(), store.getY(),  store.getOpenTime(),
                     store.getCloseTime(), store.getOpenDate(), store.getCloseDate(), reviewCount.size(),likeCount.size());
+
             mapMappings.add(mapMapping);
         }
         return mapMappings;
     }
+    
 
     @Transactional
     public List<StoreCountDTO> findMapType(StoreType storeType){

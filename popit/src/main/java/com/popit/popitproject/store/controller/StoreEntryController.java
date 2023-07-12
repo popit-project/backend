@@ -1,18 +1,17 @@
 package com.popit.popitproject.store.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.popit.popitproject.common.exception.ResponseDTO;
+import com.popit.popitproject.common.exception.StatusCode;
 import com.popit.popitproject.store.entity.StoreEntity;
-import com.popit.popitproject.store.exception.KakaoAddressChange;
 import com.popit.popitproject.store.exception.storeSeller.StoreSellerValidate;
 
-import com.popit.popitproject.store.model.SellerResponse;
-import com.popit.popitproject.store.model.SellerStoreHomeResponse;
-import com.popit.popitproject.store.model.SellerUpdateResponse;
-import com.popit.popitproject.store.model.StoreSellerDTO;
+import com.popit.popitproject.store.controller.sellerResponse.SellerResponse;
+import com.popit.popitproject.store.controller.sellerResponse.SellerStoreHomeResponse;
+import com.popit.popitproject.store.controller.sellerResponse.SellerUpdateResponse;
+import com.popit.popitproject.store.model.SellerEntryDTO;
 
-import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
+import com.popit.popitproject.store.model.UpdateStoreInfoDTO;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.store.service.StoreSellerService;
 import com.popit.popitproject.user.entity.UserEntity;
@@ -29,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +42,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@ControllerAdvice(assignableTypes = StoreSellerController.class)
 @RequestMapping("/api")
-public class StoreSellerController {
+public class StoreEntryController {
 
     private final UserRepository userRepository;
     private final StoreSellerService sellerService;
@@ -62,42 +59,25 @@ public class StoreSellerController {
         @RequestPart("file") MultipartFile file,
         @RequestPart("sellerDTO") String sellerDTO) throws IOException {
 
-        log.info("판매자 입점신청 시작");
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        StoreSellerDTO StoreSellerDTO = objectMapper.readValue(sellerDTO, StoreSellerDTO.class);
-        StoreSellerDTO.setStoreImgURL(file);
+        SellerEntryDTO storeSellerDTO = SellerEntryDTO.getStoreSellerDTO(file, sellerDTO);
 
-        // 유효성 검사
-        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, StoreSellerDTO);
+        UserEntity user = storeSellerValidate.validateSellerRegistration(userId, storeSellerDTO);
 
-        // 서비스를 이용해서 Seller 생성
-
-        StoreEntity createdSeller = sellerService.saveSellerInfo(user,StoreSellerDTO);
-        log.info("셀러 권한 세팅 완료");
-
+        StoreEntity createdSeller = sellerService.saveStoreInfo(user,storeSellerDTO);
         sellerService.generateSellerRole(user, createdSeller);
 
-        String newAddress = createdSeller.getStoreAddress();
-        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
-        log.info("주소변환 완료");
-        SellerResponse sellerResponse = SellerResponse.builder()
-            .id(createdSeller.getId())
-            .storeName(createdSeller.getStoreName())
-            .storeImage(createdSeller.getStoreImage())
-            .storeType(String.valueOf(createdSeller.getStoreType()))
-            .storeAddress(createdSeller.getStoreAddress())
-            .openTime(createdSeller.getOpenTime())
-            .closeTime(createdSeller.getCloseTime())
-            .openDate(createdSeller.getOpenDate())
-            .closeDate(createdSeller.getCloseDate())
-            .businessLicenseNumber(createdSeller.getBusinessLicenseNumber())
-            .x(change.getX())
-            .y(change.getY())
-            .build();
+        SellerResponse sellerResponse = SellerResponse.getSellerResponse(createdSeller);
 
-        log.info("판매자 입점신청 완료");
-        return ResponseEntity.ok().body(createdSeller.getId());
+        ResponseDTO<Object> response =
+            ResponseDTO.builder()
+                .status(String.valueOf(StatusCode.SELLER_STORE_CREATE.getStatus()))
+                .message(StatusCode.SELLER_STORE_CREATE.getMessage())
+                .data(sellerResponse)
+                .build();
+
+        return ResponseEntity.ok().body(response);
     }
+
 
     @ApiOperation(
         value = "스토어 유저용 프로필 홈"
@@ -109,22 +89,19 @@ public class StoreSellerController {
             () -> new RuntimeException("매장을 찾을 수 없습니다.")
         );
 
-        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
-            .storeId(store.getId())
-            .sellerId(store.getUser().getStore().getId())
-            .storeImage(store.getStoreImage())
-            .storeName(store.getStoreName())
-            .storeType(store.getStoreType().getDisplayName())
-            .storeAddress(store.getStoreAddress())
-            .openTime(store.getOpenTime())
-            .closeTime(store.getCloseTime())
-            .openDate(store.getOpenDate())
-            .closeDate(store.getCloseDate())
-            .build();
+        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.getSellerStoreHomeResponse(
+            store);
 
-        return ResponseEntity.ok().body(sellerResponse);
+        ResponseDTO<Object> response =
+            ResponseDTO.builder()
+                .status(String.valueOf(StatusCode.SELLER_STORE_UPDATE.getStatus()))
+                .message(StatusCode.SELLER_STORE_UPDATE.getMessage())
+                .data(sellerResponse)
+                .build();
 
+        return ResponseEntity.ok().body(response);
     }
+
 
     @ApiOperation(
         value = "스토어 셀러용 프로필 홈"
@@ -138,19 +115,8 @@ public class StoreSellerController {
             () -> new RuntimeException("매장을 찾을 수 없습니다.")
         );
 
-        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
-            .sellerId(sellerId)
-            .storeId(store.getId())
-            .sellerId(store.getUser().getStore().getId())
-            .storeImage(store.getStoreImage())
-            .storeName(store.getStoreName())
-            .storeType(store.getStoreType().getDisplayName())
-            .storeAddress(store.getStoreAddress())
-            .openTime(store.getOpenTime())
-            .closeTime(store.getCloseTime())
-            .openDate(store.getOpenDate())
-            .closeDate(store.getCloseDate())
-            .build();
+        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.getSellerStoreHomeResponseBySellerId(
+            sellerId, store);
 
         return ResponseEntity.ok().body(sellerResponse);
 
@@ -158,14 +124,14 @@ public class StoreSellerController {
 
     @ApiOperation(
         value = "가게 삭제"
-        , notes = "가게를 삭제하고, 그 안의 리뷰, 소식도 함께 삭제합니다.")
+        , notes = "가게를 삭제하고, 그 안의 리뷰, 소식, 아이템도 함께 삭제합니다.")
     @DeleteMapping("/stores/{storeId}")
     public ResponseEntity<String> deleteStore(@PathVariable Long storeId) {
         try {
             // 스토어 삭제 로직 구현
             sellerService.deleteStore(storeId);
-
             return ResponseEntity.ok("Store deleted successfully");
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Failed to delete store: " + e.getMessage());
@@ -178,7 +144,7 @@ public class StoreSellerController {
         notes = "가게 입점 정보를 수정합니다.")
     @PutMapping(path = "/seller/sellerEnter")
     public ResponseEntity<?> updateSellerInfo(@AuthenticationPrincipal String userId,
-        @RequestBody UpdateStoreSellerDTO updateStoreSellerDTO) throws IOException {
+        @RequestBody UpdateStoreInfoDTO updateStoreInfoDTO) throws IOException {
 
         // 토큰에서 가져온 사용자 정보
         UserEntity user = userRepository.findByUserId(userId);
@@ -187,19 +153,15 @@ public class StoreSellerController {
             .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
 
         // 스토어 정보 업데이트
-        StoreEntity updatedStoreInfo = sellerService.updateStore(updateStoreSellerDTO, originStoreInfo);
+        StoreEntity updatedStoreInfo = sellerService.updateStore(updateStoreInfoDTO, originStoreInfo);
 
-        SellerUpdateResponse sellerUpdateResponse = SellerUpdateResponse.builder()
-            .storeId(originStoreInfo.getId())
-            .storeAddress(updatedStoreInfo.getStoreAddress())
-            .openTime(updatedStoreInfo.getOpenTime())
-            .closeTime(updatedStoreInfo.getCloseTime())
-            .openDate(updatedStoreInfo.getOpenDate())
-            .closeDate(updatedStoreInfo.getCloseDate())
-            .build();
+        SellerUpdateResponse sellerUpdateResponse = SellerUpdateResponse.getSellerUpdateResponse(
+            originStoreInfo, updatedStoreInfo);
 
         return ResponseEntity.ok().body(sellerUpdateResponse);
     }
+
+
 
     @ApiOperation(
             value = "유저 id로 스토어 받아오기"
@@ -212,21 +174,11 @@ public class StoreSellerController {
                 () -> new RuntimeException("매장을 찾을 수 없습니다.")
         );
 
-        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.builder()
-                .sellerId(store.getId())
-                .storeId(store.getId())
-                .sellerId(store.getUser().getStore().getId())
-                .storeImage(store.getStoreImage())
-                .storeName(store.getStoreName())
-                .storeType(store.getStoreType().getDisplayName())
-                .storeAddress(store.getStoreAddress())
-                .openTime(store.getOpenTime())
-                .closeTime(store.getCloseTime())
-                .openDate(store.getOpenDate())
-                .closeDate(store.getCloseDate())
-                .build();
+        SellerStoreHomeResponse sellerResponse = SellerStoreHomeResponse.getSellerStoreHomeByUserId(
+            store);
 
         return ResponseEntity.ok().body(sellerResponse);
-
     }
+
+
 }

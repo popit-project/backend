@@ -15,6 +15,6 @@ public interface NewsRepository extends JpaRepository<NewsEntity, Long> {
 
     @Query("SELECT COUNT(n) FROM store s JOIN s.news n WHERE s.id = :storeId")
     int countNewsByStoreId(@Param("storeId") Long storeId);
-    void deleteBySeller(StoreEntity store);
 
+    Optional<List<NewsEntity>> findAllBySeller(StoreEntity store);
 }

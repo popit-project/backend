@@ -1,16 +1,13 @@
 package com.popit.popitproject.store.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.popit.popitproject.news.entity.NewsEntity;
 import com.popit.popitproject.review.entity.ReviewEntity;
 import com.popit.popitproject.store.exception.storeSeller.StoreRegisteredException;
 import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.store.repository.MapMapping;
 import com.popit.popitproject.user.entity.UserEntity;
-import javax.validation.Constraint;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.*;
@@ -22,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.experimental.FieldNameConstants;
 
 
 @Getter
@@ -55,11 +51,9 @@ public class StoreEntity implements Serializable {
     private String storeAddress;
 
     @NotNull(message = "오픈 시간은 필수 입력 항목입니다.")
-    @JsonFormat(pattern = "HH:mm")
     private LocalTime openTime;
 
     @NotNull(message = "마감 시간은 필수 입력 항목입니다.")
-    @JsonFormat(pattern = "HH:mm")
     private LocalTime closeTime;
 
     @FutureOrPresent(message = "오픈 시간은 현재 또는 이후 날짜만 입력할 수 있습니다.")

@@ -1,10 +1,10 @@
-package com.popit.popitproject.news.repository;
+package com.popit.popitproject.notification.repository;
 
-import com.popit.popitproject.news.entity.NotificationEntity;
+import com.popit.popitproject.notification.entity.NotificationEntity;
 import com.popit.popitproject.user.entity.UserEntity;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {

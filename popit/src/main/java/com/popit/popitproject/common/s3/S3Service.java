@@ -1,4 +1,4 @@
-package com.popit.popitproject.Item.service;
+package com.popit.popitproject.common.s3;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -41,30 +41,37 @@ public class S3Service {
   private String bucketName;
 
   @Bean
-  public S3Client s3Client() {
+  public S3Client s3Client() {  // S3Client는 AWS S3(Simple Storage Service)와 상호 작용하기 위한 클라이언트
     return S3Client.builder()
         .region(Region.of(region))
         .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
         .build();
   }
+
+  // 파일을 Amazon S3 버킷에 업로드 ,  MultipartFile file 클라이언트에서 업로드한 파일 : 업로드하는 방식은 HTML 폼, AJAX 요청, HTTP POST
   public String uploadFile(MultipartFile file) throws IOException {
     AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
 
+    // S3 클라이언트 생성
     S3Client s3 = S3Client.builder()
         .region(Region.of(region))
         .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
         .build();
 
+    // UUID를 사용하여 고유한 파일 이름 생성
     String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
+    // PutObjectRequest를 빌드합니다.
     PutObjectRequest putObjectRequest = PutObjectRequest.builder()
         .bucket(bucketName)
         .key(fileName)
         .build();
 
+    // 파일을 Amazon S3에 업로드합니다.
     PutObjectResponse response = s3.putObject(putObjectRequest,
         RequestBody.fromByteBuffer(ByteBuffer.wrap(file.getBytes())));
 
+    // 업로드된 파일의 URL을 반환합니다.
     if (response.sdkHttpResponse().isSuccessful()) {
       return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + fileName;
     } else {
@@ -73,14 +80,16 @@ public class S3Service {
   }
 
 
-  public List<String> listFiles() {
+  public List<String> listFiles() { // Amazon S3 버킷에 있는 모든 파일을 나열합니다.
     AwsBasicCredentials awsCreds = AwsBasicCredentials.create(accessKey, secretKey);
 
+    // S3Client 생성
     S3Client s3 = S3Client.builder()
         .region(Region.of(region))
         .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
         .build();
 
+    // ListObjectsV2Request를 빌드
     ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
         .bucket(bucketName)
         .build();

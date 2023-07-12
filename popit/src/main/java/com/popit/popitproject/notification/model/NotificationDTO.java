@@ -1,7 +1,10 @@
-package com.popit.popitproject.news.model;
+package com.popit.popitproject.notification.model;
 
-import com.popit.popitproject.news.entity.NotificationEntity;
-import lombok.*;
+import com.popit.popitproject.notification.entity.NotificationEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @NoArgsConstructor

@@ -36,8 +36,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private Collection<? extends GrantedAuthority> getAuthorities(UserEntity user) {
         if (user.getRoles() != null) {
             String[] roles = user.getRoles().stream()
-                    .map(UserEntity.Role::name)
-                    .toArray(String[]::new);
+                .map(UserEntity.Role::name)
+                .toArray(String[]::new);
             return AuthorityUtils.createAuthorityList(roles);
         }
         return Collections.emptyList();

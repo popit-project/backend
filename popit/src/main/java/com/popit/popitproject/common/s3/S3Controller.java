@@ -1,6 +1,6 @@
-package com.popit.popitproject.Item.controller;
+package com.popit.popitproject.common.s3;
 
-import com.popit.popitproject.Item.service.S3Service;
+import com.popit.popitproject.common.s3.S3Service;
 import java.io.IOException;
 import java.util.List;
 import lombok.AllArgsConstructor;

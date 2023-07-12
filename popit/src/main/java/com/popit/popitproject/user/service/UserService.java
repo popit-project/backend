@@ -56,7 +56,7 @@ public class UserService {
         userRepository.save(newUser);
 
         emailService.sendEmail(newUser.getEmail(), "POPIT-이메일 인증 요청",
-                "인증번호 6자리를 입력해 주세요: " + token);
+            "인증번호 6자리를 입력해 주세요: " + token);
 
         UserDTO result = new UserDTO();
         result.setUserId(newUser.getUserId());
@@ -127,7 +127,7 @@ public class UserService {
             userEntity.setPassword(newPassword);
             userRepository.save(userEntity);
             emailService.sendEmail(userEntity.getEmail(), "POPIT-비밀번호 재설정",
-                    "새로운 비밀번호는 " + newPassword + " 입니다.");
+                "새로운 비밀번호는 " + newPassword + " 입니다.");
             return true;
         }
         return false;

@@ -27,6 +27,14 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+
 google:
   client:
     id: ${GOOGLE_ID}
@@ -49,3 +57,4 @@ cloud:
 kakao:
   restapi:
     key: KakaoAK cecd764535a3df2e33f0e29c79e78ba8
+

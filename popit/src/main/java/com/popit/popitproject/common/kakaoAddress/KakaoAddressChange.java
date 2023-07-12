@@ -1,6 +1,7 @@
-package com.popit.popitproject.store.exception;
+package com.popit.popitproject.common.kakaoAddress;
 
 import com.popit.popitproject.store.entity.StoreEntity;
+import javax.validation.ConstraintViolationException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,6 +78,8 @@ public class KakaoAddressChange {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new IOException("주소 변환 중 오류가 발생했습니다.");
+
         }
 
         return null;

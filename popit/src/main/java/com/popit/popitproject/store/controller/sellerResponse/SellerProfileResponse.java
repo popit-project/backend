@@ -1,7 +1,5 @@
-package com.popit.popitproject.store.model;
+package com.popit.popitproject.store.controller.sellerResponse;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +14,7 @@ public class SellerProfileResponse {
 
     private String storeImage;
     private String storeName;
-    private String storeType; // 사업 종류
-    private String storeAddress; // 매장 주소
+    private String storeType;
+    private String storeAddress;
+
 }

@@ -19,21 +19,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
-                .formLogin().disable()
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/api/login/google").permitAll()
-                .antMatchers("/api/**").permitAll()
-                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
-                        "/configuration/security", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**").permitAll()
-                .antMatchers("/ws/**").permitAll()
-                .antMatchers("/user/**", "/sellerEnter").hasAnyAuthority("ROLE_USER", "ROLE_SELLER")
-                .antMatchers("/seller/**", "/sellerEnter").hasAnyAuthority("ROLE_SELLER")
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement()
-                .maximumSessions(1);
+            .csrf().disable()
+            .formLogin().disable()
+            .authorizeRequests()
+            .antMatchers("/").permitAll()
+            .antMatchers("/api/login/google").permitAll()
+            .antMatchers("/api/**").permitAll()
+            .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                "/configuration/security", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**").permitAll()
+            .antMatchers("/ws/**").permitAll()
+            .antMatchers("/user/**", "/sellerEnter").hasAnyAuthority("ROLE_USER", "ROLE_SELLER")
+            .antMatchers("/seller/**", "/sellerEnter").hasAnyAuthority("ROLE_SELLER")
+            .anyRequest().authenticated()
+            .and()
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .sessionManagement()
+            .maximumSessions(1);
     }
 }

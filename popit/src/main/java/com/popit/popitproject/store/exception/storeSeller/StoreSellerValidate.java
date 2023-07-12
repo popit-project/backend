@@ -1,12 +1,12 @@
 package com.popit.popitproject.store.exception.storeSeller;
 
-import com.popit.popitproject.store.model.StoreSellerDTO;
+import com.popit.popitproject.store.entity.StoreEntity;
+import com.popit.popitproject.store.model.SellerEntryDTO;
 import com.popit.popitproject.store.model.StoreType;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,7 @@ public class StoreSellerValidate {
     private final UserRepository userRepository;
 
     // 스토어 등록 유효성 검사
-    public UserEntity validateSellerRegistration(String userId, StoreSellerDTO sellerDTO) {
+    public UserEntity validateSellerRegistration(String userId, SellerEntryDTO sellerDTO) {
 
         // 사용자를 찾을 수 없음
         UserEntity user = userRepository.findByUserId(userId);
@@ -27,7 +27,12 @@ public class StoreSellerValidate {
 
         // 스토어가 이미 등록된 경우
         if (user.getStore() != null) {
-            throw new StoreAlreadyRegisteredException("이미 스토어가 등록된 상태입니다.");
+            StoreEntity store = StoreEntity.builder()
+                .storeName(user.getStore().getStoreName())
+                .id(user.getSellerId())
+                .build();
+
+            throw new StoreAlreadyRegisteredException("이미 판매자로 등록된 상태입니다.");
         }
 
         // 중복된 스토어가 있을 경우

@@ -1,4 +1,4 @@
-package com.popit.popitproject.news.service;
+package com.popit.popitproject.common.kakaoAddress;
 
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;

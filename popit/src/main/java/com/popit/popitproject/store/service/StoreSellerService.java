@@ -1,37 +1,32 @@
 package com.popit.popitproject.store.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.popit.popitproject.Item.service.S3Service;
-import com.popit.popitproject.news.entity.NewsEntity;
-import com.popit.popitproject.news.model.NewsDTO;
-import com.popit.popitproject.news.repository.NewsRepository;
-import com.popit.popitproject.review.exception.ReviewException;
+
+import com.popit.popitproject.Item.service.ItemService;
+import com.popit.popitproject.common.s3.S3Service;
+import com.popit.popitproject.news.service.NewsService;
 import com.popit.popitproject.review.repository.ReviewRepository;
+import com.popit.popitproject.store.entity.LikeEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
-import com.popit.popitproject.store.exception.KakaoAddressChange;
-import com.popit.popitproject.store.exception.StoreException;
+import com.popit.popitproject.common.kakaoAddress.KakaoAddressChange;
+import com.popit.popitproject.store.exception.storeSeller.StoreAddressException;
 import com.popit.popitproject.store.model.SellerModeButton;
-import com.popit.popitproject.store.model.StoreSellerDTO;
+import com.popit.popitproject.store.model.SellerEntryDTO;
 import com.popit.popitproject.store.model.StoreType;
-import com.popit.popitproject.store.model.UpdateStoreSellerDTO;
+import com.popit.popitproject.store.model.UpdateStoreInfoDTO;
+import com.popit.popitproject.store.repository.LikeRepository;
 import com.popit.popitproject.store.repository.StoreRepository;
 import com.popit.popitproject.store.repository.StoreSellerRepository;
 import com.popit.popitproject.user.entity.UserEntity;
 import com.popit.popitproject.user.entity.UserEntity.Role;
 import com.popit.popitproject.user.repository.UserRepository;
 import java.io.IOException;
-import java.time.LocalTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-/**
- * 서비스 레이어는 컨트롤러와 퍼시스턴스 사이에서 비즈니스 로직을 수행하는 역할을 한다. HTTP와 긴밀히 연관된 컨트롤러에서 분리돼 있고, 또 데이터 베이스와 긴밀히 연관된
- * 퍼시스턴스와도 분리돼 있다.
- */
 
 @Slf4j
 @Service
@@ -41,17 +36,17 @@ public class StoreSellerService {
     private final StoreSellerRepository sellerRepository;
     private final UserRepository userRepository;
     private final S3Service s3Service;
-    private final NewsRepository newsRepository;
     private final ReviewRepository reviewRepository;
     private final StoreRepository storeRepository;
+    private final NewsService newsService;
+    private final ItemService itemService;
+    private final LikeRepository likeRepository;
 
-    public StoreEntity saveSellerInfo(UserEntity user, StoreSellerDTO StoreSellerDTO) throws IOException {
+    public StoreEntity saveStoreInfo(UserEntity user, SellerEntryDTO StoreSellerDTO)
+        throws IOException {
 
         MultipartFile file = StoreSellerDTO.getStoreImgURL();
         String imageUrl = s3Service.uploadFile(file);
-
-        String newAddress = StoreSellerDTO.getStoreAddress();
-        StoreEntity change = KakaoAddressChange.addressChange(newAddress);
 
         StoreEntity storeEntity = StoreEntity.builder()
             .storeName(StoreSellerDTO.getStoreName())
@@ -64,12 +59,26 @@ public class StoreSellerService {
             .closeDate(StoreSellerDTO.getCloseDate())
             .businessLicenseNumber(StoreSellerDTO.getBusinessLicenseNumber())
             .user(user)
-            .x(change.getX())
-            .y(change.getY())
             .build();
+
+        addressChange(storeEntity);
 
         return storeRepository.save(storeEntity);
     }
+
+    public void addressChange(StoreEntity storeEntity) throws IOException {
+        StoreEntity change = KakaoAddressChange.addressChange(storeEntity.getStoreAddress());
+
+        if (change != null) {
+            storeEntity.setX(change.getX());
+            storeEntity.setY(change.getY());
+        } else {
+            throw new StoreAddressException("주소 변환 실패 : " + storeEntity.getStoreAddress());
+        }
+
+    }
+
+
     public void generateSellerRole(UserEntity user, StoreEntity store) {
         user.getRoles().add(Role.ROLE_SELLER);
         user.setSellerModeButton(SellerModeButton.BUTTON_DISPLAY_ON);
@@ -81,41 +90,41 @@ public class StoreSellerService {
     public void deleteStore(Long storeId) throws NotFoundException {
         StoreEntity store = sellerRepository.findById(storeId)
             .orElseThrow(NotFoundException::new);
+        log.info("service-delete start");
 
-        // 스토어에 연결된 소식 삭제
-        newsRepository.deleteBySeller(store);
-
-        // 스토어에 연결된 리뷰 삭제
+        itemService.deleteItems(store.getId());
+        newsService.deleteNews(store);
         reviewRepository.deleteByStore(store);
 
-        // 스토어와 연결된 유저 정보 삭제
+        List<LikeEntity> like = store.getLikes();
+        likeRepository.deleteAll(like);
+
         UserEntity user = store.getUser();
-        store.setUser(null); // 스토어에서 유저 연결 해제
+        store.setUser(null);
+        user.setStore(null);
+        user.setSellerModeButton(SellerModeButton.BUTTON_DISPLAY_OFF);
+        user.getRoles().remove(Role.ROLE_SELLER);
 
-        // 스토어와 연결된 유저 정보에서 sellerId 필드 제거
-        user.setStore(null); // sellerId 필드 제거
-        userRepository.save(user); // 유저 정보 업데이트
-
-        // 스토어 삭제
+        userRepository.save(user);
         sellerRepository.delete(store);
     }
 
     @Transactional
-    public StoreEntity updateStore(UpdateStoreSellerDTO updateStoreSellerDTO, StoreEntity storeInfo) throws IOException {
+    public StoreEntity updateStore(UpdateStoreInfoDTO updateStoreInfoDTO, StoreEntity storeInfo)
+        throws IOException {
 
-        String newAddress = updateStoreSellerDTO.getStoreAddress();
+        String newAddress = updateStoreInfoDTO.getStoreAddress();
         StoreEntity change = KakaoAddressChange.addressChange(newAddress);
-        if(change == null){
+        if (change == null) {
             throw new RuntimeException("주소가 잘못 입력되었습니다.");
         }
 
-
         // 수정된 정보로 업데이트
-        storeInfo.setStoreAddress(updateStoreSellerDTO.getStoreAddress());
-        storeInfo.setOpenTime(updateStoreSellerDTO.getOpenTime());
-        storeInfo.setCloseTime(updateStoreSellerDTO.getCloseTime());
-        storeInfo.setOpenDate(updateStoreSellerDTO.getOpenDate());
-        storeInfo.setCloseDate(updateStoreSellerDTO.getCloseDate());
+        storeInfo.setStoreAddress(updateStoreInfoDTO.getStoreAddress());
+        storeInfo.setOpenTime(updateStoreInfoDTO.getOpenTime());
+        storeInfo.setCloseTime(updateStoreInfoDTO.getCloseTime());
+        storeInfo.setOpenDate(updateStoreInfoDTO.getOpenDate());
+        storeInfo.setCloseDate(updateStoreInfoDTO.getCloseDate());
 
         storeInfo.setX(change.getX());
         storeInfo.setY(change.getY());
