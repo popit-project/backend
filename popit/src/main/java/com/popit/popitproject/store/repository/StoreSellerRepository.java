@@ -19,6 +19,9 @@ public interface StoreSellerRepository extends JpaRepository<StoreEntity, Long> 
 
     Optional<StoreEntity> findByStoreName(String storeName);
 
+    @Query(value = "SELECT * FROM store s WHERE DATE(s.open_date) = CURDATE() + INTERVAL 1 DAY OR DATE(s.close_date) = CURDATE() + INTERVAL 1 DAY", nativeQuery = true)
+    List<StoreEntity> findOpeningOrClosingStores();
+
     @Query(value = "SELECT * FROM store s WHERE s.close_date < CURDATE()", nativeQuery = true)
     List<StoreEntity> findExpiredStores();
 
