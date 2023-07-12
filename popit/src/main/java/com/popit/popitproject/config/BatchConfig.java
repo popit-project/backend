@@ -1,5 +1,6 @@
 package com.popit.popitproject.config;
 
+import com.popit.popitproject.notification.service.NotificationService;
 import com.popit.popitproject.store.entity.StoreEntity;
 
 import com.popit.popitproject.store.repository.StoreSellerRepository;
@@ -27,12 +28,14 @@ public class BatchConfig {
     private final StepBuilderFactory stepBuilderFactory;
     private final StoreSellerRepository sellerRepository;
     private final StoreSellerService sellerService;
+    private final NotificationService notificationService;
 
     @Bean
     public Job job() {
         Job job = jobBuilderFactory.get("job")
-            .start(deleteStore())
-            .build();
+                .start(deleteStore())
+                .next(sendOpeningOrClosingNotifications()) // 추가
+                .build();
 
         return job;
     }
@@ -55,6 +58,33 @@ public class BatchConfig {
                 return RepeatStatus.FINISHED;
             })
             .build();
+    }
 
+    // 오픈, 종료일자 하루 전 알림 기능
+    @Bean
+    public Job sendOpeningOrClosingNotificationsJob() {
+        Job job = jobBuilderFactory.get("오픈, 종료 알림 run!")
+                .start(sendOpeningOrClosingNotifications())
+                .build();
+
+        return job;
+    }
+
+    @Bean
+    public Step sendOpeningOrClosingNotifications() {
+        return stepBuilderFactory.get("오픈, 종료 알림")
+                .tasklet((contribution, chunkContext) -> {
+                    log.info("오픈, 종료 알림 start");
+
+                    List<StoreEntity> stores = sellerRepository.findOpeningOrClosingStores();
+
+                    if (stores.size() > 0) {
+                        for (StoreEntity store : stores) {
+                            notificationService.storeOpeningOrClosingNotification(store);
+                        }
+                    }
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
     }
 }

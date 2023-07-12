@@ -6,6 +6,8 @@ import com.popit.popitproject.notification.repository.NotificationRepository;
 import com.popit.popitproject.store.entity.LikeEntity;
 import com.popit.popitproject.store.entity.StoreEntity;
 import com.popit.popitproject.store.repository.LikeRepository;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,18 +62,24 @@ public class NotificationService {
             notifyUserCount(like.getUser().getUserId(), count);
         }
     }
+
+    // 오픈, 종료 하루 전 알림
+    public void storeOpeningOrClosingNotification(StoreEntity store) {
+        List<LikeEntity> likes = likeRepository.findByStore(store);
+        for (LikeEntity like : likes) {
+            NotificationEntity notification = new NotificationEntity();
+            notification.setUser(like.getUser());
+            String message;
+            if (store.getOpenDate().isEqual(LocalDate.now().plusDays(1))) {
+                message = store.getStoreName() + "가 내일 오픈합니다!";
+            } else {
+                message = store.getStoreName() + "가 내일 마감합니다!";
+            }
+            notification.setMessage(message);
+            NotificationEntity savedNotification = notificationRepository.save(notification);
+            notifyUser(savedNotification);
+            Long count = notificationRepository.countByUser(like.getUser());
+            notifyUserCount(like.getUser().getUserId(), count);
+        }
+    }
 }
-
-
-//    private final SimpMessagingTemplate template;
-//
-//    @Autowired
-//    public NotificationService(SimpMessagingTemplate template) {
-//        this.template = template;
-//    }
-//
-//    public void notifyUser(NotificationEntity notification) {
-//        NotificationDTO notificationDTO = new NotificationDTO(notification);
-//        this.template.convertAndSendToUser(notification.getUser().getUserId(), "/topic/notifications", notificationDTO);
-//    }
-//}
