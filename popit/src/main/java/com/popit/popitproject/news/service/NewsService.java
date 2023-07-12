@@ -123,14 +123,14 @@ public class NewsService {
     public void deleteNews(StoreEntity store) {
             List<NewsEntity> newsEntities = newsRepository.findAllBySeller(store).orElseThrow();
 
-            // 뉴스의 이미지 삭제
-            for (NewsEntity news : newsEntities) {
-                String newsImageUrl = news.getNewsImgURL();
-                String fileName = newsImageUrl.replace(
-                    "https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion()
-                        + ".amazonaws.com/", "");
-                s3Service.deleteFile(fileName);
-            }
+//            // 뉴스의 이미지 삭제
+//            for (NewsEntity news : newsEntities) {
+//                String newsImageUrl = news.getNewsImgURL();
+//                String fileName = newsImageUrl.replace(
+//                    "https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion()
+//                        + ".amazonaws.com/", "");
+//                s3Service.deleteFile(fileName);
+//            }
 
             newsRepository.deleteAll(newsEntities);
     }

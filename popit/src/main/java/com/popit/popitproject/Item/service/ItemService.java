@@ -115,12 +115,11 @@ public class ItemService {
 
         for (Item item : items) {
             setOrdersNullItemNm(item);
-
-            String itemImageUrl = item.getItemImgURL();
-            String fileName = itemImageUrl.replace(
-                "https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion()
-                    + ".amazonaws.com/", "");
-            s3Service.deleteFile(fileName);
+//            String itemImageUrl = item.getItemImgURL();
+//            String fileName = itemImageUrl.replace(
+//                "https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion()
+//                    + ".amazonaws.com/", "");
+//            s3Service.deleteFile(fileName);
         }
 
         itemRepository.deleteAll(items);
