@@ -8,7 +8,7 @@ public class IndexController {
 
     @GetMapping    // 기본 홈 경로
     public String index() {
-        return "jenkins Test27";
+        return "jenkins Test28";
     }
 
 }
