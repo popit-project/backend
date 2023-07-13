@@ -92,20 +92,10 @@ public class NewsService {
             .orElseThrow(() -> new RuntimeException("뉴스 아이디에 해당하는 글을 찾을 수 없습니다."));
     }
 
-    // 삭제
     public List<NewsEntity> delete(final NewsEntity entity) {
         // 저장할 엔티티가 유효한지 확인
         validate(entity);
         try {
-
-            NewsEntity news = newsRepository.findById(entity.getId())
-                .orElseThrow(RuntimeException::new);
-            String newsImageUrl = news.getNewsImgURL();
-            String fileName = newsImageUrl.replace(
-                "https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion()
-                    + ".amazonaws.com/", "");
-            s3Service.deleteFile(fileName);
-            // 엔티티 삭제
             newsRepository.delete(entity);
         } catch (Exception e) {
             // 예외 발생 시 id랑 exception 로깅
@@ -119,19 +109,8 @@ public class NewsService {
         return retrieve(entity.getSeller().getId());
     }
 
-    // 삭제
     public void deleteNews(StoreEntity store) {
             List<NewsEntity> newsEntities = newsRepository.findAllBySeller(store).orElseThrow();
-
-//            // 뉴스의 이미지 삭제
-//            for (NewsEntity news : newsEntities) {
-//                String newsImageUrl = news.getNewsImgURL();
-//                String fileName = newsImageUrl.replace(
-//                    "https://" + s3Service.getBucketName() + ".s3." + s3Service.getRegion()
-//                        + ".amazonaws.com/", "");
-//                s3Service.deleteFile(fileName);
-//            }
-
             newsRepository.deleteAll(newsEntities);
     }
 
